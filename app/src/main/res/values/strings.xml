@@ -1,0 +1,226 @@
+<resources>
+    <!-- Main Activity -->
+    <!--    <string name="app_name">VidyoConnector</string>-->
+    <string name="app_name">ConnectorK</string>
+
+    <!-- Join Fragments -->
+    <string name="joinAsGuest_joinAsUser">Join as Registered User</string>
+    <string name="joinAsGuest_roomKey">Room Key</string>
+    <string name="joinAsUser_password">Password</string>
+    <string name="joinAsUser_username">Username</string>
+    <string name="joinAsGuest_portal">Portal address</string>
+    <string name="joinAsGuest_join">Join as Guest</string>
+    <string name="join_welcome_text">Welcome! \n Please enter the details below to join the call as guest or sign in if you have an account.</string>
+    <string name="joinAsGuest_name">Display Name</string>
+    <string name="joinAsGuest_roomPin">Room Pin</string>
+
+    <!-- Participants Fragment -->
+    <string name="participants_title">Participants (%s)</string>
+
+    <!-- Permission Dialog -->
+    <string name="permission_dialog_title">Permission denied</string>
+    <string name="permission_dialog_message">Without this permissions the app is unable to connect to conference. Please, accept this permissions in settings!</string>
+    <string name="permission_dialog_go_to_settings">Go to Settings</string>
+    <string name="permission_dialog_exit">Exit</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_general">General</string>
+    <string name="settings_audio">Audio</string>
+    <string name="settings_video">Video</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_logs">Logs</string>
+    <string name="settings_about">About</string>
+
+    <!-- AboutSettings -->
+    <string name="settingsAbout_title">About VidyoConnector</string>
+    <string name="settingsAbout_message"><![CDATA[Vidyo\'s technology is covered by one or more issued or pending United States patents, as more fully detailed on <a href=\'http://www.vidyo.com/company/patent-notices\'>the Patent Notice page of Vidyo\'s website</a>, as well as issued and pending international patents and may include open source software, as further explained under <a href=\'http://www.vidyo.com/wp-content/uploads/Vidyo-OSS-Attributions.pdf\'>Vidyo OSS Attributions</a>. VIDYO, Vidyo logos and icons and trademarks of the VIDYO family of products are trademarks or registered trademarks of Vidyo, Inc., registered with the United States Patent and Trademark Office and/or in other jurisdictions.]]></string>
+    <string name="settingsAbout_copyright">Copyright&#169; 2010&#8211;2022 Vidyo, Inc.</string>
+
+    <!-- CpuTradeOffProfile -->
+    <string name="CpuTradeOffProfile_Low">Low</string>
+    <string name="CpuTradeOffProfile_Medium">Medium</string>
+    <string name="CpuTradeOffProfile_High">High</string>
+
+    <!-- AnalyticsServiceType -->
+    <string name="AnalyticsServiceType_None">None</string>
+    <string name="AnalyticsServiceType_Google">Google</string>
+    <string name="AnalyticsServiceType_VidyoInsights">Vidyo Insights</string>
+
+    <!-- AudioCodec -->
+    <string name="AudioCodec_Unknown">Unknown</string>
+    <string name="AudioCodec_Opus">Opus</string>
+    <string name="AudioCodec_OpusRed">Opus RED</string>
+    <string name="AudioCodec_SpeexRed">Speex RED</string>
+
+    <!-- ConferenceState -->
+    <string name="ConferenceState_Fail">Connection Failed</string>
+    <string name="ConferenceState_Reconnecting">Reconnecting…</string>
+
+    <!-- General Preference -->
+    <string name="preference_cpu_profile_title">CPU Profile</string>
+    <string name="preference_network_for_signaling_title">Network for Signaling</string>
+    <string name="preference_network_for_media_title">Network for Media</string>
+    <string name="preference_number_of_participants_title">Select Number of Participants</string>
+    <string name="preference_self_view_options_title">SelfView Options</string>
+    <string name="preference_auto_reconnect_title">Auto Reconnect</string>
+    <string name="preference_max_reconnect_attempts_title">Max Reconnect Attempts</string>
+    <string name="preference_reconnect_back_off_title">Reconnect Back Off</string>
+    <string name="preference_analytics_title">Analytics</string>
+    <string name="preference_enable_analytics_title">Enable Analytics</string>
+    <string name="preference_type_of_analytics_title">Type of Analytics</string>
+    <string name="preference_analyticsType">%s Analytics</string>
+
+    <!-- Analytics Fragments -->
+    <string name="analytics_ip_address">IP Address or URL</string>
+    <string name="analytics_web_property">Web Property ID</string>
+    <string name="analytics_empty">empty</string>
+
+    <!-- Audio Preference -->
+    <string name="preference_device_selection_title">Device Selection</string>
+    <string name="preference_microphone_title">Microphone</string>
+    <string name="preference_speaker_title">Speaker</string>
+    <string name="preference_audio_code_preference_title">Audio Code Preference</string>
+    <string name="preference_audio_packet_interval_title">Audio Packet Interval</string>
+    <string name="preference_forward_error_correction_title">Forward Error Correction (FEC)</string>
+    <string name="preference_packet_lost_title">Packet Loss %</string>
+    <string name="preference_bit_rate_multiplier_title">Bit Rate Multiplier</string>
+    <string name="preference_audio_recording">Recording</string>
+    <string name="preference_audio_recordLocalMicrophone">Record microphone audio</string>
+    <string name="preference_audio_recordLocalSpeaker">Record speaker audio</string>
+    <string name="preference_audio_shareRecordings">Share audio recordings</string>
+    <string name="preference_audio_clearRecordings">Clear audio recordings cache</string>
+
+    <!-- Video Preference -->
+    <string name="preference_camera_title">Camera</string>
+    <string name="preference_resolution_title">Resolution</string>
+    <string name="preference_frame_rate_title">Frame Rate</string>
+    <string name="preference_disable_video_on_poor_connection_title">Disable Video on Poor Connection</string>
+    <string name="preference_response_time_title">Response Time</string>
+    <string name="preference_sample_time_title">Sample Time</string>
+    <string name="preference_low_bandwidth_threshold_title">Low Bandwidth Threshold</string>
+    <string name="preference_audio_streams_title">Audio Streams</string>
+    <string name="preference_max_allowed_bandwidth_title">Max Allowed Bandwidth</string>
+    <string name="preference_max_send_bit_rate_title">Send</string>
+    <string name="preference_max_receive_bit_rate_title">Receive</string>
+
+    <!-- Logs Fragment -->
+    <string name="settingsLogs_displayLogs">Display Logs in Real Time</string>
+    <string name="settingsLogs_logLevel">Log Level</string>
+    <string name="settingsLogs_logFilter">Log Filter</string>
+
+    <!-- LogLevel -->
+    <string name="LogLevel_Debug">Debug</string>
+    <string name="LogLevel_Production">Production</string>
+    <string name="LogLevel_Advanced">Advanced</string>
+
+    <!-- Service -->
+    <string name="conferenceService_inProgress">Conference in progress</string>
+    <string name="conferenceService_channelName">Vidyo Connector</string>
+
+    <!-- Conference -->
+    <string name="conference_shareActive">You are sharing your screen</string>
+    <string name="conference_audioOnly">The video was disabled due to poor connection</string>
+
+    <!-- Chat -->
+    <string name="chat_messageHint">Type your message here</string>
+    <string name="chat_messageError">Please enter less than 1,024 characters</string>
+    <string name="chat_participantNameHint">Type participant name</string>
+    <string name="chat_header">Chat</string>
+    <string name="chat_headerGroup">Group Chat</string>
+    <string name="chat_lessThanMinuteAgo">less than a minute ago</string>
+    <string name="chat_participantLeft">Left the conference</string>
+    <string name="chat_participantLeftHint">Participant left the conference.\nYou are not able to send messages.</string>
+
+    <!-- ChatMessage -->
+    <string name="ChatMessage_ParticipantJoined">%s has joined the conference</string>
+    <string name="ChatMessage_ParticipantLeft">%s has left the conference</string>
+    <string name="ChatMessage_ScreenShareStarted">%s has started sharing</string>
+    <string name="ChatMessage_ScreenShareStopped">%s has stopped sharing</string>
+
+    <!-- VirtualBackgroundEffect -->
+    <string name="VirtualBackgroundEffect_None">None</string>
+    <string name="VirtualBackgroundEffect_Blur">Blur Background</string>
+    <string name="VirtualBackgroundEffect_FileImage">Use Your Image</string>
+    <string name="VirtualBackgroundEffect_AssetImage" />
+
+    <!-- VirtualBackgroundDialog -->
+    <string name="virtualBackgroundDialog_chooseBackground">Choose Background</string>
+    <string name="virtualBackgroundDialog_background">Background</string>
+
+    <!-- SelectFrameRateDialog -->
+    <string name="selectFrameRateDialog_title">Select between normal and high frame rate share</string>
+    <string name="selectFrameRateDialog_message">Normal Frame Rate is recommended for sharing static documents, presentations, images etc.\n\nHigh Frame Rate is recommended for sharing videos.</string>
+    <string name="selectFrameRateDialog_normal">Normal Frame Rate</string>
+    <string name="selectFrameRateDialog_high">High Frame Rate</string>
+    <string name="selectFrameRateDialog_negative">Cancel</string>
+    <string name="selectFrameRateDialog_positive">Proceed</string>
+
+    <!-- RemoteCameraPresetDialog -->
+    <string name="remoteCameraPresetDialog_title">Select camera preset</string>
+
+    <!-- StopScreenShareDialog -->
+    <string name="stopScreenShareDialog_title">Screen share</string>
+    <string name="stopScreenShareDialog_message">Stop sharing your screen from VidyoConnector?</string>
+    <string name="stopScreenShareDialog_negative">Cancel</string>
+    <string name="stopScreenShareDialog_positive">Stop Share</string>
+
+    <!-- ParticipantClearance -->
+    <string name="ParticipantClearance_None">None</string>
+    <string name="ParticipantClearance_Member">Member</string>
+    <string name="ParticipantClearance_Owner">Owner</string>
+    <string name="ParticipantClearance_Admin">Admin</string>
+    <string name="ParticipantClearance_Moderator">Moderator</string>
+
+    <!-- ParticipantTrust -->
+    <string name="ParticipantTrust_Local">Local</string>
+    <string name="ParticipantTrust_Federated">Federated</string>
+    <string name="ParticipantTrust_Anonymous">Guest</string>
+
+    <!-- AnalyticsEventCategory -->
+    <string name="AnalyticsEventCategory_None">None</string>
+    <string name="AnalyticsEventCategory_Login">Login</string>
+    <string name="AnalyticsEventCategory_UserType">User Type</string>
+    <string name="AnalyticsEventCategory_JoinConference">Join Conference</string>
+    <string name="AnalyticsEventCategory_ConferenceEnd">Conference End</string>
+    <string name="AnalyticsEventCategory_InCallCodec">In Call Codec</string>
+
+    <!-- AnalyticsEventAction -->
+    <string name="AnalyticsEventAction_LoginSuccess">Success</string>
+    <string name="AnalyticsEventAction_LoginAttempt">Attempt</string>
+    <string name="AnalyticsEventAction_LoginFailedAuthentication">Failed: Authentication failed</string>
+    <string name="AnalyticsEventAction_LoginFailedConnect">Failed: Failed to connect</string>
+    <string name="AnalyticsEventAction_LoginFailedResponseTimeout">Failed: Response timeout</string>
+    <string name="AnalyticsEventAction_LoginFailedMiscError">Failed: Misc error</string>
+    <string name="AnalyticsEventAction_LoginFailedWebProxyAuthRequired">Failed: WebProxy authentication required</string>
+    <string name="AnalyticsEventAction_LoginFailedUnsupportedTenantVersion">Failed: Unsupported tenant version</string>
+    <string name="AnalyticsEventAction_UserTypeGuest">Guest</string>
+    <string name="AnalyticsEventAction_UserTypeRegularToken">Regular: Token</string>
+    <string name="AnalyticsEventAction_UserTypeRegularPassword">Regular: Password</string>
+    <string name="AnalyticsEventAction_UserTypeRegularSaml">Regular: Saml</string>
+    <string name="AnalyticsEventAction_UserTypeRegularExtData">Regular: ExtData</string>
+    <string name="AnalyticsEventAction_JoinConferenceSuccess">Success</string>
+    <string name="AnalyticsEventAction_JoinConferenceAttempt">Attempt</string>
+    <string name="AnalyticsEventAction_JoinConferenceReconnectRequests">Reconnect Requests</string>
+    <string name="AnalyticsEventAction_JoinConferenceFailedConnectionError">Failed: Connection error</string>
+    <string name="AnalyticsEventAction_JoinConferenceFailedWrongPin">Failed: Wrong pin</string>
+    <string name="AnalyticsEventAction_JoinConferenceFailedRoomFull">Failed: Room full</string>
+    <string name="AnalyticsEventAction_JoinConferenceFailedRoomDisabled">Failed: Room disabled</string>
+    <string name="AnalyticsEventAction_JoinConferenceFailedConferenceLocked">Failed: Conference locked</string>
+    <string name="AnalyticsEventAction_JoinConferenceFailedUnknownError">Failed: Unknown error</string>
+    <string name="AnalyticsEventAction_ConferenceEndLeft">Left</string>
+    <string name="AnalyticsEventAction_ConferenceEndBooted">Booted</string>
+    <string name="AnalyticsEventAction_ConferenceEndSignalingConnectionLost">Signaling Connection lost</string>
+    <string name="AnalyticsEventAction_ConferenceEndMediaConnectionLost">Media Connection lost</string>
+    <string name="AnalyticsEventAction_ConferenceEndUnknownError">Unknown error</string>
+    <string name="AnalyticsEventAction_InCallCodecVideoH264">Video: H264</string>
+    <string name="AnalyticsEventAction_InCallCodecVideoH264SVC">Video: H264 SVC</string>
+    <string name="AnalyticsEventAction_InCallCodecAudioSPEEXRED">Audio: SPEEX RED</string>
+    <string name="AnalyticsEventAction_All">All</string>
+    <string name="AnalyticsEventAction_Unknown">Unknown</string>
+
+    <!-- CameraControlsIcon -->
+    <string name="cameraControlsIcon_title">Remote Camera Control</string>
+    <string name="cameraControlsIcon_localCamera">Local Camera - %s</string>
+
+</resources>
