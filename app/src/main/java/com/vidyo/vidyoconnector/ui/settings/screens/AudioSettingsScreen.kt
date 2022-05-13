@@ -110,7 +110,7 @@ private fun AudioCodecPreference() {
     PreferenceList(
         name = stringResource(R.string.preference_audio_code_preference_title),
         value = state.value,
-        values = AudioCodec.values().filter { it != AudioCodec.Unknown },
+        values = AudioCodec.values().toList(),
         onDisplay = { stringResource(it.textId) },
         onSelected = { preference.value = it },
     )

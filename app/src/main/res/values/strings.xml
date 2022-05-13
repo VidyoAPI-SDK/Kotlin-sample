@@ -48,7 +48,6 @@
     <string name="AnalyticsServiceType_VidyoInsights">Vidyo Insights</string>
 
     <!-- AudioCodec -->
-    <string name="AudioCodec_Unknown">Unknown</string>
     <string name="AudioCodec_Opus">Opus</string>
     <string name="AudioCodec_OpusRed">Opus RED</string>
     <string name="AudioCodec_SpeexRed">Speex RED</string>
