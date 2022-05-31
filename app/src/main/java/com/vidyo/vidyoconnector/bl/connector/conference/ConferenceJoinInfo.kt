@@ -4,24 +4,13 @@ import com.vidyo.VidyoClient.Connector.Connector
 
 sealed class ConferenceJoinInfo {
 
-    data class AsAuto(val name: String) : ConferenceJoinInfo() {
-        lateinit var roomInfo: RoomInfo
-            private set
-
-        override suspend fun join(connector: Connector, callback: Connector.IConnect): Boolean {
-            val result = runCatching { RoomCreationService.resolveJoinInfo(this) }.getOrNull() ?: return false
-            roomInfo = result.first
-            return result.second.join(connector, callback)
-        }
-    }
-
     data class AsGuest(
         val portal: String,
         val name: String,
         val roomKey: String,
         val roomPin: String,
     ) : ConferenceJoinInfo() {
-        override suspend fun join(connector: Connector, callback: Connector.IConnect): Boolean {
+        override fun join(connector: Connector, callback: Connector.IConnect): Boolean {
             return connector.connectToRoomAsGuest(
                 portal,
                 name.trim(),
@@ -39,7 +28,7 @@ sealed class ConferenceJoinInfo {
         val roomKey: String,
         val roomPin: String,
     ) : ConferenceJoinInfo() {
-        override suspend fun join(connector: Connector, callback: Connector.IConnect): Boolean {
+        override fun join(connector: Connector, callback: Connector.IConnect): Boolean {
             return connector.connectToRoomWithKey(
                 portal,
                 username,
@@ -51,5 +40,6 @@ sealed class ConferenceJoinInfo {
         }
     }
 
-    abstract suspend fun join(connector: Connector, callback: Connector.IConnect): Boolean
+    abstract fun join(connector: Connector, callback: Connector.IConnect): Boolean
+
 }

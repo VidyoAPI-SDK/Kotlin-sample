@@ -32,7 +32,7 @@ import dev.matrix.compose_routes.navigateToAnalyticsScreen
 @Composable
 @ComposableRoute
 fun GeneralSettingsScreen() {
-    val settingsEnabled = !ConnectorManager.conference.conference.collectAsState().value.state.isActive
+    val settingsEnabled = !ConnectorManager.conference.state.collectAsState().value.isActive
 
     Scaffold(topBar = { AppBar() }) {
         Column(

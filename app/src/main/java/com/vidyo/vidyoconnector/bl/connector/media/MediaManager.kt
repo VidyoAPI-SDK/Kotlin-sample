@@ -39,8 +39,8 @@ class MediaManager(
     init {
         scope.connector.registerResourceManagerEventListener(ResourceManagerEvents())
 
-        conference.conference.collectInScope(scope) {
-            if (!it.state.isActive) audioOnlyState.value = false
+        conference.state.collectInScope(scope) {
+            if (!it.isActive) audioOnlyState.value = false
         }
     }
 

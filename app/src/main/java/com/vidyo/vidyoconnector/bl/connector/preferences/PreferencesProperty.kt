@@ -2,6 +2,7 @@ package com.vidyo.vidyoconnector.bl.connector.preferences
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,8 @@ open class PreferencesProperty<T>(
     override val replayCache: List<T>
         get() = emptyList()
 
-    override suspend fun collect(collector: FlowCollector<T>): Nothing {
+    @InternalCoroutinesApi
+    override suspend fun collect(collector: FlowCollector<T>) {
         val channel = Channel<Unit>(Channel.CONFLATED)
         val callback = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == this.key) channel.trySend(Unit)

@@ -5,7 +5,6 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
 }
 
 val properties = Properties().apply {
@@ -21,8 +20,8 @@ val defaultGuestName = localProperties.getProperty("DEFAULT_GUEST_NAME").orEmpty
 val defaultGuestRoomKey = localProperties.getProperty("DEFAULT_GUEST_ROOM_KEY").orEmpty()
 val defaultGuestRoomPin = localProperties.getProperty("DEFAULT_GUEST_ROOM_PIN").orEmpty()
 
-val defaultGoogleAnalyticsId = System.getProperty("VC_DEFAULT_GOOGLE_ANALYTICS_ID")
-    ?: (gradle as ExtensionAware).extra.properties["VC_DEFAULT_GOOGLE_ANALYTICS_ID"]
+val defaultGoogleAnalyticsId = System.getProperty("DEFAULT_GOOGLE_ANALYTICS_ID")
+    ?: (gradle as ExtensionAware).extra.properties["DEFAULT_GOOGLE_ANALYTICS_ID"]
     ?: ""
 
 android {
@@ -95,12 +94,9 @@ dependencies {
         implementation(checkNotNull(it))
     }
 
-    // Kotlin
     val kotlinVersion: String by rootProject.extra
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
-    // AppCompat
     implementation("androidx.appcompat:appcompat:1.4.1")
 
     // Compose
@@ -127,10 +123,6 @@ dependencies {
 
     // Material
     implementation("com.google.android.material:material:1.6.0")
-
-    // Ktor
-    implementation("io.ktor:ktor-client-core:2.0.1")
-    implementation("io.ktor:ktor-client-cio:2.0.1")
 
     // ComposableRoutes
     implementation("com.github.MatrixDev.ComposableRoutes:composable-routes-lib:0.1.14")

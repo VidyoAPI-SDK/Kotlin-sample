@@ -1,19 +1,20 @@
 <resources>
+    <!-- Main Activity -->
+    <!--    <string name="app_name">VidyoConnector</string>-->
     <string name="app_name">ConnectorK</string>
 
-    <!-- Join -->
-    <string name="join_welcome">Welcome!\nPlease enter the details below to join the call as guest or sign in if you have an account.</string>
-    <string name="join_portal">Portal address</string>
-    <string name="join_displayName">Display Name</string>
-    <string name="join_username">Username</string>
-    <string name="join_password">Password</string>
-    <string name="join_roomKey">Room Key</string>
-    <string name="join_roomPin">Room Pin</string>
-    <string name="join_joinAsAuto">Start\ncall</string>
-    <string name="join_joinAsGuest">Join\nas Guest</string>
-    <string name="join_joinAsUser">Join\nas Registered User</string>
+    <!-- Join Fragments -->
+    <string name="joinAsGuest_joinAsUser">Join as Registered User</string>
+    <string name="joinAsGuest_roomKey">Room Key</string>
+    <string name="joinAsUser_password">Password</string>
+    <string name="joinAsUser_username">Username</string>
+    <string name="joinAsGuest_portal">Portal address</string>
+    <string name="joinAsGuest_join">Join as Guest</string>
+    <string name="join_welcome_text">Welcome! \n Please enter the details below to join the call as guest or sign in if you have an account.</string>
+    <string name="joinAsGuest_name">Display Name</string>
+    <string name="joinAsGuest_roomPin">Room Pin</string>
 
-    <!-- Participants -->
+    <!-- Participants Fragment -->
     <string name="participants_title">Participants (%s)</string>
 
     <!-- Permission Dialog -->
@@ -47,7 +48,6 @@
     <string name="AnalyticsServiceType_VidyoInsights">Vidyo Insights</string>
 
     <!-- AudioCodec -->
-    <string name="AudioCodec_Unknown">Unknown</string>
     <string name="AudioCodec_Opus">Opus</string>
     <string name="AudioCodec_OpusRed">Opus RED</string>
     <string name="AudioCodec_SpeexRed">Speex RED</string>
@@ -113,13 +113,11 @@
     <string name="LogLevel_Production">Production</string>
     <string name="LogLevel_Advanced">Advanced</string>
 
-    <!-- ConferenceService -->
+    <!-- Service -->
     <string name="conferenceService_inProgress">Conference in progress</string>
     <string name="conferenceService_channelName">Vidyo Connector</string>
 
     <!-- Conference -->
-    <string name="conference_welcome">Welcome</string>
-    <string name="conference_roomPin">Room PIN: %s</string>
     <string name="conference_shareActive">You are sharing your screen</string>
     <string name="conference_audioOnly">The video was disabled due to poor connection</string>
 

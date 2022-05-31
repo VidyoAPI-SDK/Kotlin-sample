@@ -1,42 +1,31 @@
 package com.vidyo.vidyoconnector.bl.connector.preferences.values
 
 import androidx.annotation.StringRes
-import com.vidyo.VidyoClient.Connector.Connector.ConnectorPreferredAudioCodec
 import com.vidyo.vidyoconnector.R
 
 enum class AudioCodec(
     @StringRes val textId: Int,
-    val jniValue: ConnectorPreferredAudioCodec,
+    val jniValue: String,
 ) {
-    Unknown(
-        textId = R.string.AudioCodec_Unknown,
-        jniValue = ConnectorPreferredAudioCodec.VIDYO_CONNECTORPREFERREDAUDIOCODEC_Unknown,
-    ),
     Opus(
         textId = R.string.AudioCodec_Opus,
-        jniValue = ConnectorPreferredAudioCodec.VIDYO_CONNECTORPREFERREDAUDIOCODEC_Opus,
+        jniValue = "OPUS",
     ),
     OpusRed(
         textId = R.string.AudioCodec_OpusRed,
-        jniValue = ConnectorPreferredAudioCodec.VIDYO_CONNECTORPREFERREDAUDIOCODEC_OpusRed,
+        jniValue = "OPUS RED",
     ),
     SpeexRed(
         textId = R.string.AudioCodec_SpeexRed,
-        jniValue = ConnectorPreferredAudioCodec.VIDYO_CONNECTORPREFERREDAUDIOCODEC_SpeexRed,
+        jniValue = "SPEEX RED",
     );
 
     companion object {
-        inline fun fromOrdinal(
-            ordinal: Int,
-            fallback: () -> AudioCodec = { Unknown },
-        ): AudioCodec {
+        inline fun fromOrdinal(ordinal: Int, fallback: () -> AudioCodec): AudioCodec {
             return values().find { it.ordinal == ordinal } ?: fallback()
         }
 
-        inline fun fromJniValue(
-            value: ConnectorPreferredAudioCodec,
-            fallback: () -> AudioCodec = { Unknown },
-        ): AudioCodec {
+        inline fun fromJniValue(value: String, fallback: () -> AudioCodec): AudioCodec {
             return values().find { it.jniValue == value } ?: fallback()
         }
     }
