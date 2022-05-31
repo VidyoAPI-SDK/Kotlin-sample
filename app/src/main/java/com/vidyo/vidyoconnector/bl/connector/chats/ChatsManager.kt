@@ -46,8 +46,8 @@ class ChatsManager(
             if (!it.isLocal) ensureChat(it)
         }
 
-        conferenceManager.state
-            .map { it.isActive }
+        conferenceManager.conference
+            .map { it.state.isActive }
             .distinctUntilChanged()
             .filter { !it }
             .collectInScopeLatest(scope) {

@@ -1,7 +1,6 @@
 package com.vidyo.vidyoconnector.bl.connector.analytics
 
 import android.content.SharedPreferences
-import com.vidyo.vidyoconnector.BuildConfig
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
 import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesManager
 import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesProperty
@@ -20,7 +19,7 @@ class AnalyticsManager(
 
     val enabled = preferences.createPreferencesProperty(
         key = "analytics_enabled",
-        read = { getBoolean(it, false) },
+        read = { getBoolean(it, true) },
         write = { key, value -> putBoolean(key, value) },
     )
 
@@ -62,8 +61,7 @@ class AnalyticsManager(
                 when (it) {
                     is AnalyticsInfo.None -> Unit
                     is AnalyticsInfo.Google -> {
-                        val trackingId = it.trackingId.ifEmpty { BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID }
-                        scope.connector.analyticsStart(it.type.jniValue, "", trackingId)
+                        scope.connector.analyticsStart(it.type.jniValue, "", it.trackingId)
                     }
                     is AnalyticsInfo.VidyoInsight -> {
                         scope.connector.analyticsStart(it.type.jniValue, it.serverUrl, "")

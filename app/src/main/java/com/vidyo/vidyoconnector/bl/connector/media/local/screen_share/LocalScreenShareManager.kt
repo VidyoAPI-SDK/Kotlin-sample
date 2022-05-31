@@ -61,8 +61,8 @@ class LocalScreenShareManager(
                 sessionScope.cancel()
             }
 
-        conference.state
-            .filter { it != ConferenceState.Joined }
+        conference.conference
+            .filter { it.state != ConferenceState.Joined }
             .collectInScope(sessionScope) {
                 logD { "worker: not in conference" }
                 sessionScope.cancel()

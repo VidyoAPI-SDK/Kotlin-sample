@@ -11,6 +11,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.VidyoClient.Connector.ConnectorPkg
+import com.vidyo.vidyoconnector.BuildConfig
 import com.vidyo.vidyoconnector.appContext
 import com.vidyo.vidyoconnector.bl.connector.analytics.AnalyticsManager
 import com.vidyo.vidyoconnector.bl.connector.chats.ChatsManager
@@ -57,8 +58,11 @@ object ConnectorManager {
         if (!ConnectorPkg.initialize()) {
             throw Exception("ConnectorPkg.initialize() failed")
         }
-        if (!ConnectorPkg.setConstructOptions("""{"enableGoogleAnalytics":false}""")) {
-            throw Exception("ConnectorPkg.setConstructOptions() failed")
+        if (BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID.isNotEmpty()) {
+            val json = "{\"googleAnalyticsDefaultId\":\"${BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID}\"}"
+            if (!ConnectorPkg.setConstructOptions(json)) {
+                throw Exception("ConnectorPkg.setConstructOptions() failed")
+            }
         }
 
         LogsManager.logsFile.parentFile?.mkdirs()
