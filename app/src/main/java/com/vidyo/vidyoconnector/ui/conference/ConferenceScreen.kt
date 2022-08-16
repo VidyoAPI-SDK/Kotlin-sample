@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -20,9 +21,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.vidyo.vidyoconnector.R
 import com.vidyo.vidyoconnector.bl.connector.media.base.Camera
+import com.vidyo.vidyoconnector.ui.conference.icons.*
 import com.vidyo.vidyoconnector.ui.conference.ptz.CameraControlsPanel
 import com.vidyo.vidyoconnector.ui.utils.LocalConnectorManager
-import com.vidyo.vidyoconnector.ui.conference.icons.*
 import dev.matrix.compose_routes.ComposableRoute
 
 private val TOOLBAR_ROW_HEIGHT = 50.dp
@@ -40,7 +41,8 @@ private val toolbarOutAnimation = fadeOut() + shrinkOut(targetSize = {
 @Preview
 fun ConferenceScreen() {
     val manager = LocalConnectorManager.current
-    val moreOptions = remember { mutableStateOf(false) }
+    val moreOptions = rememberSaveable { mutableStateOf(false) }
+    val autoJoinMessageVisible = rememberSaveable { mutableStateOf(true) }
     val cameraControlsActive = remember { mutableStateOf<Camera?>(null) }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -97,7 +99,10 @@ fun ConferenceScreen() {
                 enter = toolbarInAnimation,
                 exit = toolbarOutAnimation,
             ) {
-                JumpBarPopup(cameraControlsActive = cameraControlsActive)
+                JumpBarPopup(
+                    cameraControlsActive = cameraControlsActive,
+                    autoJoinMessageVisible = autoJoinMessageVisible,
+                )
             }
         }
 
@@ -113,6 +118,8 @@ fun ConferenceScreen() {
             )
         }
     }
+
+    AutoJoinOverlay(autoJoinMessageVisible)
 }
 
 @Composable
@@ -154,6 +161,7 @@ private fun JumpBar(modifier: Modifier = Modifier, moreOptions: MutableState<Boo
 private fun JumpBarPopup(
     modifier: Modifier = Modifier,
     cameraControlsActive: MutableState<Camera?>,
+    autoJoinMessageVisible: MutableState<Boolean>,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -176,9 +184,9 @@ private fun JumpBarPopup(
         ScreenShareIcon(modifier = defaultModifier)
         ParticipantsIcon(modifier = defaultModifier)
         ChatsIcon(modifier = defaultModifier)
-
         CameraEffectIcon(modifier = defaultModifier)
-        CameraControlsIcon(modifier = defaultModifier, state = cameraControlsActive)
+        CameraControlsIcon(cameraControlsActive, modifier = defaultModifier)
+        AutoJoinOverlayIcon(autoJoinMessageVisible, modifier = defaultModifier)
     }
 }
 

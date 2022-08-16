@@ -11,6 +11,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.VidyoClient.Connector.ConnectorPkg
+import com.vidyo.vidyoconnector.BuildConfig
 import com.vidyo.vidyoconnector.appContext
 import com.vidyo.vidyoconnector.bl.connector.analytics.AnalyticsManager
 import com.vidyo.vidyoconnector.bl.connector.chats.ChatsManager
@@ -22,6 +23,7 @@ import com.vidyo.vidyoconnector.bl.connector.participants.ParticipantsManager
 import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesManager
 import com.vidyo.vidyoconnector.bl.connector.virtual_background.VirtualBackgroundManager
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
+import org.json.JSONObject
 import java.io.File
 import java.util.concurrent.atomic.AtomicReference
 
@@ -57,8 +59,11 @@ object ConnectorManager {
         if (!ConnectorPkg.initialize()) {
             throw Exception("ConnectorPkg.initialize() failed")
         }
-        if (!ConnectorPkg.setConstructOptions("""{"enableGoogleAnalytics":false}""")) {
-            throw Exception("ConnectorPkg.setConstructOptions() failed")
+        if (BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID.isNotEmpty()) {
+            val json = "{\"googleAnalyticsDefaultId\":\"${BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID}\"}"
+            if (!ConnectorPkg.setExperimentalOptions(json)) {
+                throw Exception("ConnectorPkg.setExperimentalOptions() failed")
+            }
         }
 
         LogsManager.logsFile.parentFile?.mkdirs()
@@ -152,6 +157,11 @@ object ConnectorManager {
                     defaultViewStyle,
                     preferences.numberOfParticipants.value,
                 )
+                val json = JSONObject().apply {
+                    put("SetPixelDensity", appContext.resources.displayMetrics.densityDpi)
+                    put("ViewingDistance", 1.0)
+                }
+                scope.connector.setRendererOptionsForViewId(it, json.toString())
                 layout.value = it
             }
             lockLayout(callback)

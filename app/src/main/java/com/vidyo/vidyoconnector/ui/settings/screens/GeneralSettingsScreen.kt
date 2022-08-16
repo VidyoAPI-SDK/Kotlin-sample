@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vidyo.vidyoconnector.R
 import com.vidyo.vidyoconnector.bl.connector.ConnectorManager
-import com.vidyo.vidyoconnector.bl.connector.analytics.AnalyticsType
 import com.vidyo.vidyoconnector.bl.connector.preferences.values.CpuTradeOffProfile
 import com.vidyo.vidyoconnector.ui.settings.preferences.Preference
 import com.vidyo.vidyoconnector.ui.settings.preferences.PreferenceCategory
@@ -27,12 +26,13 @@ import com.vidyo.vidyoconnector.ui.utils.LocalConnectorManager
 import com.vidyo.vidyoconnector.ui.utils.LocalNavController
 import com.vidyo.vidyoconnector.ui.utils.NavBackIcon
 import dev.matrix.compose_routes.ComposableRoute
-import dev.matrix.compose_routes.navigateToAnalyticsScreen
+import dev.matrix.compose_routes.navigateToGoogleAnalyticsScreen
+import dev.matrix.compose_routes.navigateToInsightsAnalyticsScreen
 
 @Composable
 @ComposableRoute
 fun GeneralSettingsScreen() {
-    val settingsEnabled = !ConnectorManager.conference.state.collectAsState().value.isActive
+    val settingsEnabled = !ConnectorManager.conference.conference.collectAsState().value.state.isActive
 
     Scaffold(topBar = { AppBar() }) {
         Column(
@@ -57,9 +57,8 @@ fun GeneralSettingsScreen() {
             Spacer(modifier = Modifier.height(50.dp))
 
             PreferenceCategory(name = R.string.preference_analytics_title)
-            EnableAnalyticsPreference(enabled = settingsEnabled)
-            TypeOfAnalyticsPreference(enabled = settingsEnabled)
-            OpenAnalyticsPreference(enabled = settingsEnabled)
+            OpenGoogleAnalyticsPreference(enabled = settingsEnabled)
+            OpenInsightsAnalyticsPreference(enabled = settingsEnabled)
         }
     }
 }
@@ -193,48 +192,29 @@ private fun AutoReconnectAttemptBackOffPreference(enabled: Boolean) {
 }
 
 @Composable
-private fun EnableAnalyticsPreference(enabled: Boolean) {
-    val manager = LocalConnectorManager.current.analytics
-    val value = manager.enabled.collectAsState().value
-
-    PreferenceSwitch(
-        name = stringResource(R.string.preference_enable_analytics_title),
-        value = value,
-        enabled = enabled,
-        onChanged = { manager.enabled.value = it },
-    )
-}
-
-@Composable
-private fun TypeOfAnalyticsPreference(enabled: Boolean) {
-    val manager = LocalConnectorManager.current.analytics
-    val value = manager.type.collectAsState().value
-    val analyticsEnabled = manager.enabled.collectAsState().value
-
-    PreferenceList(
-        name = stringResource(R.string.preference_type_of_analytics_title),
-        value = value,
-        values = AnalyticsType.values().filter { it != AnalyticsType.None },
-        enabled = enabled && analyticsEnabled,
-        onDisplay = { stringResource(it.textId) },
-        onSelected = { manager.type.value = it },
-    )
-}
-
-@Composable
-private fun OpenAnalyticsPreference(enabled: Boolean) {
-    val manager = LocalConnectorManager.current.analytics
-    val type = manager.type.collectAsState().value
-    val analyticsEnabled = manager.enabled.collectAsState().value
-
+private fun OpenGoogleAnalyticsPreference(enabled: Boolean) {
     val navController = LocalNavController.current
 
     Preference(
-        name = stringResource(R.string.preference_analyticsType, stringResource(type.textId)),
+        name = stringResource(R.string.preference_googleAnalytics),
         value = "",
-        enabled = enabled && analyticsEnabled,
+        enabled = enabled,
         onClick = {
-            navController.navigateToAnalyticsScreen(type)
+            navController.navigateToGoogleAnalyticsScreen()
+        },
+    )
+}
+
+@Composable
+private fun OpenInsightsAnalyticsPreference(enabled: Boolean) {
+    val navController = LocalNavController.current
+
+    Preference(
+        name = stringResource(R.string.preference_insightsAnalytics),
+        value = "",
+        enabled = enabled,
+        onClick = {
+            navController.navigateToInsightsAnalyticsScreen()
         },
     )
 }

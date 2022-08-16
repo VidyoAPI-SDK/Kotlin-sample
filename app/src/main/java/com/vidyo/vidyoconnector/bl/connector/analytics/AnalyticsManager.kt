@@ -1,13 +1,13 @@
 package com.vidyo.vidyoconnector.bl.connector.analytics
 
-import android.content.SharedPreferences
-import com.vidyo.vidyoconnector.BuildConfig
+import com.vidyo.vidyoconnector.R
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
 import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesManager
 import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesProperty
+import com.vidyo.vidyoconnector.ui.utils.showToast
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
-import kotlinx.coroutines.flow.*
-import org.json.JSONObject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 
 class AnalyticsManager(
     private val scope: ConnectorScope,
@@ -20,69 +20,41 @@ class AnalyticsManager(
 
     val enabled = preferences.createPreferencesProperty(
         key = "analytics_enabled",
-        read = { getBoolean(it, false) },
+        read = { getBoolean(it, true) },
         write = { key, value -> putBoolean(key, value) },
     )
 
-    val type = preferences.createPreferencesProperty(
-        key = "analytics_type",
-        read = { AnalyticsType.fromOrdinal(getInt(it, -1)) { AnalyticsType.Google } },
-        write = { key, value -> putInt(key, value.ordinal) },
-    )
-
-    val google = preferences.createPreferencesProperty(
-        key = "analytics_Google",
-        read = { AnalyticsInfo.Google(getJson(it)) },
-        write = { key, value -> putString(key, value.toJson()) },
-    )
-
-    val vidyoInsight = preferences.createPreferencesProperty(
-        key = "analytics_VidyoInsight",
-        read = { AnalyticsInfo.VidyoInsight(getJson(it)) },
-        write = { key, value -> putString(key, value.toJson()) },
-    )
+    val googleEnabled = MutableStateFlow(scope.connector.isGoogleAnalyticsServiceEnabled)
+    val googleTrackingId = MutableStateFlow(scope.connector.googleAnalyticsServiceID.orEmpty())
+    val insightEnabled = MutableStateFlow(scope.connector.isInsightsServiceEnabled)
+    val insightAddress = MutableStateFlow(scope.connector.insightsServiceUrl.orEmpty())
 
     val events = createAnalyticsEventActionPreferences()
 
     init {
-        combine(type, enabled, ::Pair)
-            .flatMapLatest {
-                if (!it.second) {
-                    return@flatMapLatest flowOf(AnalyticsInfo.None)
-                }
-                when (it.first) {
-                    AnalyticsType.None -> flowOf(AnalyticsInfo.None)
-                    AnalyticsType.Google -> google
-                    AnalyticsType.VidyoInsight -> vidyoInsight
-                }
+        combine(googleEnabled, googleTrackingId, ::Pair).collectInScope(scope) {
+            scope.connector.stopGoogleAnalyticsService()
+            if (it.first) {
+                scope.connector.startGoogleAnalyticsService(it.second)
             }
-            .distinctUntilChanged()
-            .collectInScope(scope) {
-                scope.connector.analyticsStop()
-                when (it) {
-                    is AnalyticsInfo.None -> Unit
-                    is AnalyticsInfo.Google -> {
-                        val trackingId = it.trackingId.ifEmpty { BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID }
-                        scope.connector.analyticsStart(it.type.jniValue, "", trackingId)
-                    }
-                    is AnalyticsInfo.VidyoInsight -> {
-                        scope.connector.analyticsStart(it.type.jniValue, it.serverUrl, "")
-                    }
-                }
-            }
-    }
+        }
 
-    private fun SharedPreferences.getJson(key: String): JSONObject {
-        return try {
-            JSONObject(getString(key, "").orEmpty())
-        } catch (e: Exception) {
-            JSONObject()
+        combine(insightEnabled, insightAddress, ::Pair).collectInScope(scope) {
+            scope.connector.stopInsightsService()
+            if (it.first) {
+                if (it.second.isEmpty()) {
+                    insightEnabled.value = false
+                    showToast(R.string.analytics_insight_error)
+                } else {
+                    scope.connector.startInsightsService(it.second)
+                }
+            }
         }
     }
 
-    private fun createAnalyticsEventActionPreferences(): List<EventActionInfo> {
+    private fun createAnalyticsEventActionPreferences(): Map<AnalyticsEventCategory, List<EventActionInfo>> {
         val enabled = HashSet<AnalyticsEventAction>()
-        scope.connector.getAnalyticsEventTable { events ->
+        scope.connector.getGoogleAnalyticsEventTable { events ->
             events.asSequence()
                 .filter { it.enable }
                 .map { AnalyticsEventAction.fromJniValue(it.eventAction) }
@@ -90,7 +62,7 @@ class AnalyticsManager(
                 .toCollection(enabled)
         }
 
-        val list = ArrayList<EventActionInfo>(AnalyticsEventAction.values().size)
+        val map = LinkedHashMap<AnalyticsEventCategory, ArrayList<EventActionInfo>>(AnalyticsEventAction.values().size)
         for (action in AnalyticsEventAction.values()) {
             if (action.category == AnalyticsEventCategory.None) {
                 continue
@@ -101,16 +73,16 @@ class AnalyticsManager(
                 read = { getBoolean(it, enabled.contains(action)) },
                 write = { key, value -> putBoolean(key, value) },
                 set = {
-                    scope.connector.analyticsControlEventAction(
+                    scope.connector.googleAnalyticsControlEventAction(
                         action.category.jniValue,
                         action.jniValue,
-                        it
+                        it,
                     )
                 },
             )
 
-            list.add(EventActionInfo(action, preference))
+            map.getOrPut(action.category) { ArrayList() }.add(EventActionInfo(action, preference))
         }
-        return list
+        return map
     }
 }

@@ -9,7 +9,6 @@ import com.vidyo.vidyoconnector.bl.connector.preferences.values.Bitrate
 import com.vidyo.vidyoconnector.bl.connector.preferences.values.CpuTradeOffProfile
 
 class PreferencesManager(scope: ConnectorScope) {
-    private val options = ConnectorOptions(scope.connector)
     private val shared = scope.context.getSharedPreferences("main", Context.MODE_PRIVATE)
 
     val numberOfParticipants = createPreferencesProperty(
@@ -56,34 +55,38 @@ class PreferencesManager(scope: ConnectorScope) {
 
     val audioCodec = createConnectorProperty(
         key = "preferred_audio_codec",
-        read = { AudioCodec.fromOrdinal(getInt(it, -1)) { options.preferredAudioCodec } },
+        read = {
+            AudioCodec.fromOrdinal(getInt(it, -1)) {
+                AudioCodec.fromJniValue(scope.connector.preferredAudioCodec)
+            }
+        },
         write = { key, value -> putInt(key, value.ordinal) },
-        set = { options.setPreferredAudioCodec(it) },
-        get = { options.preferredAudioCodec },
+        set = { scope.connector.setPreferredAudioCodec(it.jniValue) },
+        get = { AudioCodec.fromJniValue(scope.connector.preferredAudioCodec) },
     )
 
     val audioPacketInterval = createConnectorProperty(
         key = "audio_packet_interval",
-        read = { getInt(it, options.audioPacketInterval) },
+        read = { getInt(it, scope.connector.audioPacketInterval) },
         write = { key, value -> putInt(key, value) },
-        set = { options.setAudioPacketInterval(it) },
-        get = { options.audioPacketInterval },
+        set = { scope.connector.setAudioPacketInterval(it) },
+        get = { scope.connector.audioPacketInterval },
     )
 
     val audioPacketLossPercentage = createConnectorProperty(
         key = "audio_packet_loss_percentage",
-        read = { getInt(it, options.audioPacketLossPercentage) },
+        read = { getInt(it, scope.connector.audioPacketLossPercentage) },
         write = { key, value -> putInt(key, value) },
-        set = { options.setAudioPacketLossPercentage(it) },
-        get = { options.audioPacketLossPercentage },
+        set = { scope.connector.setAudioPacketLossPercentage(it) },
+        get = { scope.connector.audioPacketLossPercentage },
     )
 
     val audioBitrateMultiplier = createConnectorProperty(
         key = "audio_bitrate_multiplier",
-        read = { getInt(it, options.audioBitrateMultiplier) },
+        read = { getInt(it, scope.connector.audioBitrateMultiplier) },
         write = { key, value -> putInt(key, value) },
-        set = { options.setAudioBitrateMultiplier(it) },
-        get = { options.audioBitrateMultiplier },
+        set = { scope.connector.setAudioBitrateMultiplier(it) },
+        get = { scope.connector.audioBitrateMultiplier },
     )
 
     val localCameraConstraints = createPreferencesProperty(

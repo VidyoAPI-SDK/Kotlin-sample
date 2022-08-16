@@ -65,7 +65,6 @@ class ConferenceService : Service() {
             .setContentIntent(activityPending)
             .build()
 
-
         startForeground(1, notification)
     }
 }

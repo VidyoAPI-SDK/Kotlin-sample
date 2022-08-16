@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
@@ -26,17 +27,12 @@ private enum class PermissionState {
     Granted, NotGranted, Rejected
 }
 
-private val basicPermissions = listOf(
-    Manifest.permission.CAMERA,
-    Manifest.permission.RECORD_AUDIO,
-    Manifest.permission.READ_PHONE_STATE,
-)
-
 @Composable
 fun PermissionsGuard(activity: Activity, content: @Composable () -> Unit) {
     // TODO replace when stable - https://google.github.io/accompanist/permissions/
 
     val context = LocalContext.current
+    val basicPermissions = buildBasicPermissionsList()
     val preferences = remember {
         activity.getSharedPreferences("permissions", Context.MODE_PRIVATE)
     }
@@ -107,4 +103,14 @@ private fun GoToSettings(activity: Activity) {
         },
         onDismissRequest = { activity.finish() },
     )
+}
+
+fun buildBasicPermissionsList() = buildList {
+    add(Manifest.permission.CAMERA)
+    add(Manifest.permission.RECORD_AUDIO)
+    add(Manifest.permission.READ_PHONE_STATE)
+
+    if (Build.VERSION.SDK_INT >= 31) {
+        add("android.permission.BLUETOOTH_CONNECT")
+    }
 }

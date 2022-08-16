@@ -14,7 +14,6 @@ import com.vidyo.vidyoconnector.bl.connector.conference.ConferenceState
 import com.vidyo.vidyoconnector.ui.utils.*
 import com.vidyo.vidyoconnector.ui.utils.styles.VcColors
 import dev.matrix.compose_routes.NavRoutes
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -33,8 +32,8 @@ private fun Content(activity: Activity) {
     ConnectorManager.LifecycleTracker()
 
     LaunchedEffect("screen_on") {
-        val state = ConnectorManager.conference.state
-        state.map { it.isActive }.distinctUntilChanged().collect {
+        val state = ConnectorManager.conference.conference
+        state.map { it.state.isActive }.distinctUntilChanged().collect {
             when (it) {
                 true -> activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 else -> activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -52,21 +51,21 @@ private fun Navigation(activity: Activity) {
         LocalActivity provides activity,
         LocalNavController provides navController,
     ) {
-        NavHost(navController = navController, startDestination = NavRoutes.JoinAsGuestScreen()) {
+        NavHost(navController = navController, startDestination = NavRoutes.JoinScreen()) {
             NavRoutes.registerAll(this)
         }
     }
 
     val conference = LocalConnectorManager.current.conference
     LaunchedEffect("conference") {
-        val conferenceActive = conference.state
-            .map { it.isActive && it != ConferenceState.Joining }
+        val conferenceActive = conference.conference
+            .map { it.state.isActive && it.state != ConferenceState.Joining }
             .distinctUntilChanged()
 
         conferenceActive.collect {
             val route = when (it) {
                 true -> NavRoutes.ConferenceScreen()
-                else -> NavRoutes.JoinAsGuestScreen()
+                else -> NavRoutes.JoinScreen()
             }
 
             val firstEntry = navController.backQueue.firstOrNull { entry ->
@@ -80,10 +79,10 @@ private fun Navigation(activity: Activity) {
     }
     LaunchedEffect("protocol_handler") {
         ProtocolHandler.track().filterNotNull().collect {
-            if (conference.state.value.isActive) {
+            if (conference.conference.value.state.isActive) {
                 return@collect
             }
-            navController.navigate(NavRoutes.JoinAsGuestScreen()) { clearBackStack(navController) }
+            navController.navigate(NavRoutes.JoinScreen()) { clearBackStack(navController) }
         }
     }
 }

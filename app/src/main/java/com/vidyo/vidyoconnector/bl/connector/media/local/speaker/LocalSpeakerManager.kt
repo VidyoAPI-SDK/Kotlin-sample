@@ -11,14 +11,13 @@ import com.vidyo.vidyoconnector.utils.coroutines.trigger
 import com.vidyo.vidyoconnector.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import com.vidyo.VidyoClient.Device.LocalSpeaker as VcLocalSpeaker
 
 class LocalSpeakerManager(private val scope: ConnectorScope) {
     companion object : Loggable.Tag("LocalSpeakerManager")
 
-    private val map = HashMap<String, LocalSpeaker>()
+    private val map = LinkedHashMap<String, LocalSpeaker>()
     private val mapTrigger = MutableStateFlow(0L)
     private val list = MutableStateFlow(emptyList<LocalSpeaker>())
     private val selectedState = MutableStateFlow(LocalSpeaker.Null)
@@ -34,9 +33,7 @@ class LocalSpeakerManager(private val scope: ConnectorScope) {
         scope.connector.selectDefaultSpeaker()
 
         mapTrigger.debounce(500).collectInScope(scope) {
-            val temp = map.values.toMutableList()
-            temp.sortBy { it.name }
-            list.value = temp
+            list.value = map.values.toList()
         }
 
         selected.collectInScope(scope) {
