@@ -40,7 +40,7 @@
 
         <service
             android:name=".bl.connector.conference.ConferenceService"
-            android:foregroundServiceType="mediaProjection" />
+            android:foregroundServiceType="mediaProjection|camera|microphone" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

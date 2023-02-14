@@ -3,11 +3,15 @@ package com.vidyo.vidyoconnector.bl.connector
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.VidyoClient.Connector.ConnectorPkg
@@ -22,10 +26,15 @@ import com.vidyo.vidyoconnector.bl.connector.network.NetworksManager
 import com.vidyo.vidyoconnector.bl.connector.participants.ParticipantsManager
 import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesManager
 import com.vidyo.vidyoconnector.bl.connector.virtual_background.VirtualBackgroundManager
+import com.vidyo.vidyoconnector.utils.collectLifecycleAsState
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
 import org.json.JSONObject
 import java.io.File
-import java.util.concurrent.atomic.AtomicReference
 
 @SuppressLint("StaticFieldLeak")
 object ConnectorManager {
@@ -38,18 +47,20 @@ object ConnectorManager {
     private val layoutRequestQueue = ArrayList<(View) -> Unit>()
 
     val version = scope.connector.version.orEmpty()
+    val numberOfParticipants = MutableStateFlow(3)
+
     val preferences = PreferencesManager(scope)
     val logs = LogsManager(scope, preferences)
     val analytics = AnalyticsManager(scope, preferences)
     val networks = NetworksManager(scope)
     val conference = ConferenceManager(scope)
-    val media = MediaManager(scope, conference, preferences)
+    val media = MediaManager(scope, conference)
     val participants = ParticipantsManager(scope)
     val chats = ChatsManager(scope, media, participants, conference)
     val virtualBackground = VirtualBackgroundManager(scope)
 
     init {
-        preferences.numberOfParticipants.collectInScope(scope) {
+        numberOfParticipants.collectInScope(scope) {
             scope.connector.assignViewToCompositeRenderer(layout, defaultViewStyle, it)
         }
     }
@@ -90,17 +101,25 @@ object ConnectorManager {
         }
     }
 
-    private fun lockLayout(block: (View) -> Unit) {
-        if (layoutRequestQueue.add(block) && layoutRequestQueue.size == 1) {
-            block(layout)
-        }
-    }
+    private fun lockLayout(parent: ViewGroup): Flow<View?> = channelFlow {
+        val callback: (View?) -> Unit = { trySend(it) }
 
-    private fun unlockLayout(block: (View) -> Unit) {
-        val index = layoutRequestQueue.indexOf(block)
-        layoutRequestQueue.removeAt(index)
-        if (index == 0) {
-            layoutRequestQueue.getOrNull(0)?.invoke(layout)
+        (layout.parent as? ViewGroup)?.removeAllViews()
+        parent.addView(layout)
+
+        layoutRequestQueue.add(callback)
+        callback(layout)
+
+        awaitClose {
+            val index = layoutRequestQueue.indexOf(callback)
+            layoutRequestQueue.removeAt(index)
+            if (index == layoutRequestQueue.size) {
+                parent.removeAllViews()
+                layoutRequestQueue.lastOrNull()?.invoke(layout)
+            }
+            if (layoutRequestQueue.isEmpty()) {
+                scope.connector.hideView(layout)
+            }
         }
     }
 
@@ -121,57 +140,56 @@ object ConnectorManager {
 
     @Composable
     fun PreviewView(modifier: Modifier = Modifier) {
-        val view = remember { AtomicReference<View>() }
+        val lifecycle = collectLifecycleAsState().value
         val camera = media.localCamera.selected.collectAsState().value
-
-        AndroidView(
-            modifier = modifier,
-            factory = { ConnectorLayout(it).also { v -> view.set(v) } },
-            update = {
-                if (it.tag == camera) {
-                    return@AndroidView
-                }
-                if (camera != null) {
-                    scope.connector.assignViewToCompositeRenderer(it, defaultViewStyle, 0)
-                    scope.connector.showViewLabel(it, false)
-                    scope.connector.showAudioMeters(it, false)
-                } else {
-                    scope.connector.hideView(it)
-                }
-                it.tag = camera
-            }
-        )
-
-        DisposableEffect("hide") {
-            onDispose { view.get()?.also { scope.connector.hideView(it) } }
+        if (camera != null && lifecycle.isAtLeast(Lifecycle.State.RESUMED)) {
+            ConferenceView(
+                modifier = modifier,
+                showViewLabel = false,
+                showAudioMeters = false,
+                allowRemoteOfParticipants = false,
+            )
+        } else {
+            Box(modifier = modifier)
         }
     }
 
     @Composable
-    fun ConferenceView(modifier: Modifier = Modifier) {
-        val layout = remember { mutableStateOf<View?>(null) }
-        DisposableEffect("lock") {
-            val callback: (View) -> Unit = {
-                scope.connector.assignViewToCompositeRenderer(
-                    it,
-                    defaultViewStyle,
-                    preferences.numberOfParticipants.value,
-                )
-                val json = JSONObject().apply {
-                    put("SetPixelDensity", appContext.resources.displayMetrics.densityDpi)
+    fun ConferenceView(
+        modifier: Modifier = Modifier,
+        showViewLabel: Boolean = true,
+        showAudioMeters: Boolean = true,
+        allowRemoteOfParticipants: Boolean = true,
+    ) {
+        val context = LocalContext.current
+        val wrapper = remember { ConnectorLayout(context) }
+
+        LaunchedEffect("view") {
+            lockLayout(wrapper).collectLatest { view ->
+                val number = when (allowRemoteOfParticipants) {
+                    true -> numberOfParticipants.value
+                    else -> 0
+                }
+
+                val rendererOptions = JSONObject().apply {
+                    put("SetPixelDensity", context.resources.displayMetrics.densityDpi)
                     put("ViewingDistance", 1.0)
                 }
-                scope.connector.setRendererOptionsForViewId(it, json.toString())
-                layout.value = it
+
+                scope.connector.assignViewToCompositeRenderer(view, defaultViewStyle, number)
+                scope.connector.showViewLabel(view, showViewLabel)
+                scope.connector.showAudioMeters(view, showAudioMeters)
+                scope.connector.setRendererOptionsForViewId(view, rendererOptions.toString())
+
+                if (allowRemoteOfParticipants) {
+                    numberOfParticipants.collect {
+                        scope.connector.assignViewToCompositeRenderer(view, defaultViewStyle, it)
+                    }
+                }
             }
-            lockLayout(callback)
-            onDispose { unlockLayout(callback) }
         }
 
-        val view = layout.value
-        if (view != null) {
-            AndroidView(modifier = modifier, factory = { view })
-        }
+        AndroidView(modifier = modifier, factory = { wrapper })
     }
 
     // endregion

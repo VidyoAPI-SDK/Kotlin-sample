@@ -145,7 +145,7 @@ private fun CameraPresets(participant: Participant, modifier: Modifier = Modifie
 private fun CameraPrivacy(participant: Participant, modifier: Modifier = Modifier) {
     val media = LocalConnectorManager.current.media
     val available = when (participant.isLocal) {
-        true -> !media.localCamera.muted.collectAsState().value
+        true -> !media.localCamera.muted.collectAsState().value.muted
         else -> media.remoteCamera.trackByParticipantId(participant.id).collectAsState(true).value != null
     }
 
@@ -162,7 +162,7 @@ private fun CameraPrivacy(participant: Participant, modifier: Modifier = Modifie
 private fun MicrophonePrivacy(participant: Participant, modifier: Modifier = Modifier) {
     val media = LocalConnectorManager.current.media
     val available = when (participant.isLocal) {
-        true -> !media.localMicrophone.muted.collectAsState().value
+        true -> !media.localMicrophone.muted.collectAsState().value.muted
         else -> media.remoteMicrophone.trackParticipantAvailability(participant.id)
             .collectAsState(true)
             .value

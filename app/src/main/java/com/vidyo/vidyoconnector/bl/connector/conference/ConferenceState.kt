@@ -3,6 +3,8 @@ package com.vidyo.vidyoconnector.bl.connector.conference
 import android.content.Context
 import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.vidyoconnector.R
+import kotlin.time.Duration
+import kotlin.time.TimeMark
 
 sealed class ConferenceState(val isActive: Boolean) {
 
@@ -15,7 +17,11 @@ sealed class ConferenceState(val isActive: Boolean) {
     object Joining : ConferenceState(isActive = true)
     object Joined : ConferenceState(isActive = true)
 
-    object Reconnecting : ConferenceState(isActive = true) {
+    class Reconnecting(
+        val attempt: Int,
+        val attemptTimeout: Duration,
+        val timestamp: TimeMark,
+    ) : ConferenceState(isActive = true) {
         override fun getAutoToastMessage(context: Context): CharSequence {
             return context.getString(R.string.ConferenceState_Reconnecting)
         }

@@ -1,7 +1,6 @@
 package com.vidyo.vidyoconnector.bl.connector.media.local.camera
 
 import com.vidyo.VidyoClient.Device.VideoCapability
-import org.json.JSONObject
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
@@ -39,30 +38,9 @@ data class LocalCameraConstraints(
 
             return set.sortedWith(compareBy({ it.width }, { it.height }, { it.fps }))
         }
-
-        fun fromJson(json: String): LocalCameraConstraints? {
-            return try {
-                val obj = JSONObject(json)
-                LocalCameraConstraints(
-                    width = obj.getInt("width"),
-                    height = obj.getInt("height"),
-                    frameInterval = obj.getLong("frameInterval").nanoseconds,
-                )
-            } catch (e: Exception) {
-                null
-            }
-        }
     }
 
     val fps = computeApproximateFps(frameInterval)
-
-    fun toJson(): String {
-        val json = JSONObject()
-        json.put("width", width)
-        json.put("height", height)
-        json.put("frameInterval", frameInterval.inWholeNanoseconds)
-        return json.toString()
-    }
 }
 
 private fun computeApproximateFps(frameInterval: Duration): Int {

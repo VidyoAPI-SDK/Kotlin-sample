@@ -22,6 +22,10 @@ data class Participant(
     }
 
     val initials = name.split(" ").take(2).joinToString(separator = "") {
-        it.first().uppercaseChar().toString()
+        val ch = it.firstOrNull()
+        when (ch == null) {
+            true -> ""
+            else -> ch.uppercaseChar().toString()
+        }
     }
 }

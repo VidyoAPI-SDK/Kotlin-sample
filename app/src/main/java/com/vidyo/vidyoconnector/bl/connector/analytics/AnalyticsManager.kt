@@ -3,7 +3,6 @@ package com.vidyo.vidyoconnector.bl.connector.analytics
 import com.vidyo.vidyoconnector.R
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
 import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesManager
-import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesProperty
 import com.vidyo.vidyoconnector.ui.utils.showToast
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,13 +14,7 @@ class AnalyticsManager(
 ) {
     data class EventActionInfo(
         val action: AnalyticsEventAction,
-        val preference: PreferencesProperty<Boolean>,
-    )
-
-    val enabled = preferences.createPreferencesProperty(
-        key = "analytics_enabled",
-        read = { getBoolean(it, true) },
-        write = { key, value -> putBoolean(key, value) },
+        val preference: MutableStateFlow<Boolean>,
     )
 
     val googleEnabled = MutableStateFlow(scope.connector.isGoogleAnalyticsServiceEnabled)
@@ -68,11 +61,9 @@ class AnalyticsManager(
                 continue
             }
 
-            val preference = preferences.createConnectorProperty(
-                key = "analytics_event_${action.name}",
-                read = { getBoolean(it, enabled.contains(action)) },
-                write = { key, value -> putBoolean(key, value) },
-                set = {
+            val preference = preferences.createRuntimeProperty(
+                read = { enabled.contains(action) },
+                write = {
                     scope.connector.googleAnalyticsControlEventAction(
                         action.category.jniValue,
                         action.jniValue,

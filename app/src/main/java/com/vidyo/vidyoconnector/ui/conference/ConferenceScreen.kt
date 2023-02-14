@@ -20,11 +20,15 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.vidyo.vidyoconnector.R
+import com.vidyo.vidyoconnector.bl.connector.conference.ConferenceState
 import com.vidyo.vidyoconnector.bl.connector.media.base.Camera
 import com.vidyo.vidyoconnector.ui.conference.icons.*
 import com.vidyo.vidyoconnector.ui.conference.ptz.CameraControlsPanel
 import com.vidyo.vidyoconnector.ui.utils.LocalConnectorManager
 import dev.matrix.compose_routes.ComposableRoute
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlin.time.Duration.Companion.milliseconds
 
 private val TOOLBAR_ROW_HEIGHT = 50.dp
 
@@ -75,6 +79,11 @@ fun ConferenceScreen() {
             val audioOnly = manager.media.audioOnly.collectAsState()
             if (audioOnly.value) {
                 TooltipMessage(message = stringResource(R.string.conference_audioOnly))
+            }
+
+            val conferenceState = manager.conference.conference.collectAsState().value.state
+            if (conferenceState is ConferenceState.Reconnecting) {
+                ReconnectingMessage(state = conferenceState)
             }
         }
 
@@ -210,4 +219,24 @@ private fun TooltipMessage(modifier: Modifier = Modifier, message: String) {
             .background(Color.White, shape = RoundedCornerShape(20.dp))
             .padding(horizontal = 16.dp, vertical = 8.dp),
     )
+}
+
+@Composable
+private fun ReconnectingMessage(modifier: Modifier = Modifier, state: ConferenceState.Reconnecting) {
+    val secondsLeft = remember(state) { mutableStateOf(state.attemptTimeout.inWholeSeconds) }
+
+    LaunchedEffect("timer", state) {
+        while (isActive && secondsLeft.value > 0) {
+            delay(500.milliseconds)
+            val timeLeft = state.attemptTimeout - state.timestamp.elapsedNow()
+            secondsLeft.value = timeLeft.inWholeSeconds.coerceAtLeast(0)
+        }
+    }
+
+    val text = when (secondsLeft.value > 0) {
+        true -> stringResource(R.string.conference_reconnectTry, state.attempt, secondsLeft.value)
+        else -> stringResource(R.string.conference_reconnecting)
+    }
+
+    TooltipMessage(modifier, message = text)
 }

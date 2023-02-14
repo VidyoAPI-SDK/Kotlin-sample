@@ -120,6 +120,8 @@
     <string name="conference_roomPin">Room PIN: %s</string>
     <string name="conference_shareActive">You are sharing your screen</string>
     <string name="conference_audioOnly">The video was disabled due to poor connection</string>
+    <string name="conference_reconnectTry">Reconnect try (%1$s) - %2$s</string>
+    <string name="conference_reconnecting">Reconnecting…</string>
 
     <!-- Chat -->
     <string name="chat_messageHint">Type your message here</string>

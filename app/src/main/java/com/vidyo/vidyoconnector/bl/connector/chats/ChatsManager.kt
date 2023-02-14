@@ -92,7 +92,9 @@ class ChatsManager(
     }
 
     private inner class MessageEventListener : Connector.IRegisterMessageEventListener {
-        override fun onChatMessageReceived(participant: VcParticipant, chatMessage: VcChatMessage) {
+        override fun onChatMessageReceived(participant: VcParticipant?, chatMessage: VcChatMessage) {
+            participant ?: return
+
             val type = ChatMessageType.from(chatMessage.type)
             if (!type.isMessage) {
                 return

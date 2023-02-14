@@ -90,7 +90,7 @@ private fun ResolutionPreference() {
     val manager = LocalConnectorManager.current
 
     val camera = manager.media.localCamera.selected.collectAsState().value
-    val preference = manager.preferences.localCameraConstraints
+    val preference = manager.media.localCamera.constraints
     val constraints = preference.collectAsState().value
 
     var all = camera?.constraints.orEmpty()
@@ -113,7 +113,7 @@ private fun FrameRatePreference() {
     val manager = LocalConnectorManager.current
 
     val camera = manager.media.localCamera.selected.collectAsState().value
-    val preference = manager.preferences.localCameraConstraints
+    val preference = manager.media.localCamera.constraints
     val constraints = preference.collectAsState().value
 
     var all = camera?.constraints.orEmpty()

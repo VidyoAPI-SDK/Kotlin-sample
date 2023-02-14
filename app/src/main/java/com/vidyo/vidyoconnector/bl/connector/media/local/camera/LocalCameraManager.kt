@@ -3,26 +3,40 @@ package com.vidyo.vidyoconnector.bl.connector.media.local.camera
 import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.VidyoClient.Device.Device
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
-import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesManager
+import com.vidyo.vidyoconnector.bl.connector.media.MutedState
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
 import com.vidyo.vidyoconnector.utils.coroutines.trigger
 import kotlinx.coroutines.flow.*
 import com.vidyo.VidyoClient.Device.LocalCamera as VcLocalCamera
 
-class LocalCameraManager(private val scope: ConnectorScope, preferences: PreferencesManager) {
+class LocalCameraManager(private val scope: ConnectorScope, moderation: StateFlow<MutedState>) {
     private val map = HashMap<String, LocalCamera>()
     private val mapTrigger = MutableStateFlow(0L)
     private val allState = MutableStateFlow(emptyList<LocalCamera>())
-    private val mutedState = MutableStateFlow(false)
+    private val mutedState = MutableStateFlow(MutedState.None)
     private val selectedState = MutableStateFlow<LocalCamera?>(null)
 
     val all = allState.asStateFlow()
     val muted = mutedState.asStateFlow()
     val selected = selectedState.asStateFlow()
 
+    val constraints = MutableStateFlow<LocalCameraConstraints?>(null)
+
     init {
         scope.connector.registerLocalCameraEventListener(EventListener())
         scope.connector.selectDefaultCamera()
+
+        moderation.collectInScope(scope) {
+            val state = when (it) {
+                MutedState.None -> when (mutedState.value.muted) {
+                    true -> MutedState.Muted
+                    else -> MutedState.None
+                }
+                MutedState.Muted -> MutedState.Muted
+                MutedState.ForceMuted -> MutedState.ForceMuted
+            }
+            mutedState.value = state
+        }
 
         mapTrigger.debounce(500).collectInScope(scope) {
             val temp = map.values.toMutableList()
@@ -30,10 +44,7 @@ class LocalCameraManager(private val scope: ConnectorScope, preferences: Prefere
             allState.value = temp
         }
 
-        combine(
-            selected.filterNotNull(),
-            preferences.localCameraConstraints.filterNotNull(),
-        ) { camera, constraints ->
+        combine(selected.filterNotNull(), constraints.filterNotNull()) { camera, constraints ->
             val supported = when (camera.constraints.contains(constraints)) {
                 true -> camera.handle.setMaxConstraint(
                     constraints.width,
@@ -43,7 +54,7 @@ class LocalCameraManager(private val scope: ConnectorScope, preferences: Prefere
                 else -> false
             }
             if (!supported) {
-                preferences.localCameraConstraints.value = null
+                this.constraints.value = null
             }
         }.launchIn(scope)
     }
@@ -54,7 +65,10 @@ class LocalCameraManager(private val scope: ConnectorScope, preferences: Prefere
 
     fun requestMutedState(muted: Boolean) {
         if (scope.connector.setCameraPrivacy(muted)) {
-            mutedState.value = muted
+            mutedState.value = when (muted) {
+                true -> MutedState.Muted
+                else -> MutedState.None
+            }
         }
     }
 

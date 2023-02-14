@@ -1,17 +1,13 @@
-*.iml
+.svn
 .gradle
-/local.properties
-/.idea
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-/app/libs
-.externalNativeBuild
+.idea
 .cxx
+bin
+build
+captures
+android.iml
 local.properties
+
+# Keystore files
+keystore.jks
+keystore.properties

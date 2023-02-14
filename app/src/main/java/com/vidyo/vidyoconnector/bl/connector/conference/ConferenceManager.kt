@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 class ConferenceManager(private val scope: ConnectorScope) {
     companion object : Loggable.Tag("ConferenceManager")
@@ -27,15 +29,17 @@ class ConferenceManager(private val scope: ConnectorScope) {
 
         conferenceState.map { it.state.isActive }.distinctUntilChanged().collectInScope(scope) {
             val intent = Intent(scope.context, ConferenceService::class.java)
-            when (it) {
-                true -> ContextCompat.startForegroundService(scope.context, intent)
-                else -> scope.context.stopService(intent)
+            if (!it) {
+                intent.action = ConferenceService.ACTION_STOP
             }
+            ContextCompat.startForegroundService(scope.context, intent)
         }
 
         conferenceState.collectInScope(scope) {
             logD { "conference = $it" }
-            showToast(it.state.getAutoToastMessage(scope.context))
+            if (it.state is ConferenceState.Error) {
+                showToast(it.state.getAutoToastMessage(scope.context))
+            }
         }
     }
 
@@ -89,7 +93,12 @@ class ConferenceManager(private val scope: ConnectorScope) {
             reason: Connector.ConnectorFailReason,
         ) = scope.run {
             logD { "onReconnecting: reason = $reason" }
-            conferenceState.value = conferenceState.value.copy(state = ConferenceState.Reconnecting)
+            val state = ConferenceState.Reconnecting(
+                attempt = attempt,
+                attemptTimeout = attemptTimeout.seconds,
+                timestamp = TimeSource.Monotonic.markNow(),
+            );
+            conferenceState.value = conferenceState.value.copy(state = state)
         }
 
         override fun onReconnected() = scope.run {

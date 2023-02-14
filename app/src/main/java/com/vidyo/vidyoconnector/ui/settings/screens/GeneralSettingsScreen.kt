@@ -121,7 +121,7 @@ private fun NetworkForMediaPreference(enabled: Boolean) {
 
 @Composable
 private fun NumberOfParticipantsPreference(enabled: Boolean) {
-    val preference = LocalConnectorManager.current.preferences.numberOfParticipants
+    val preference = LocalConnectorManager.current.numberOfParticipants
     val state = preference.collectAsState()
 
     PreferenceList(

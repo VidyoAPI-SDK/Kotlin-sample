@@ -42,7 +42,6 @@ class VirtualVideoStream(
         logD { "create: id = $id, name = $name, type = $type" }
 
         source.registerEventListener(EventListener())
-        source.setLowLatencyProfile(frameRate == VirtualVideoFrameRate.High)
 
         processingJob = activeState.collectInScopeLatest(scope) {
             if (it) doProcessingLoop()
@@ -80,15 +79,11 @@ class VirtualVideoStream(
             lastConstraintsHeight = frame.height
 
             val maxScale = type.computeScaleMax(frame.width, frame.height)
-            val minScale = type.computeScaleMin(frame.width, frame.height)
 
-            source.setBoundsConstraints(
-                frameRate.intervalMax.inWholeNanoseconds,
-                frameRate.intervalMin.inWholeNanoseconds,
+            source.setMaxConstraints(
                 (frame.width * maxScale).roundToInt(),
-                (frame.width * minScale).roundToInt(),
                 (frame.height * maxScale).roundToInt(),
-                (frame.height * minScale).roundToInt(),
+                frameRate.intervalMin.inWholeNanoseconds
             )
 
             logD { "processFrame: reconfigure, width = ${frame.width}, height = ${frame.height}" }

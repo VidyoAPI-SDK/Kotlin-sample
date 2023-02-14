@@ -6,11 +6,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 
-open class PreferencesProperty<T>(
-    protected val preferences: SharedPreferences,
-    protected val key: String,
-    protected val read: SharedPreferences.(String) -> T,
-    protected val write: SharedPreferences.Editor.(String, T) -> Unit,
+class PreferencesProperty<T>(
+    private val preferences: SharedPreferences,
+    private val key: String,
+    read: SharedPreferences.(String) -> T,
+    private val write: SharedPreferences.Editor.(String, T) -> Unit,
 ) : StateFlow<T> {
     override var value = read(preferences, key)
         set(value) {

@@ -3,6 +3,7 @@ package com.vidyo.vidyoconnector.bl.connector.media.local.microphone
 import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.VidyoClient.Device.Device
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
+import com.vidyo.vidyoconnector.bl.connector.media.MutedState
 import com.vidyo.vidyoconnector.bl.connector.media.RecordingsManager
 import com.vidyo.vidyoconnector.utils.Loggable
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
@@ -11,18 +12,17 @@ import com.vidyo.vidyoconnector.utils.coroutines.trigger
 import com.vidyo.vidyoconnector.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import com.vidyo.VidyoClient.Device.LocalMicrophone as VcLocalMicrophone
 
-class LocalMicrophoneManager(private val scope: ConnectorScope) {
+class LocalMicrophoneManager(private val scope: ConnectorScope, moderation: MutableStateFlow<MutedState>) {
     companion object : Loggable.Tag("LocalMicrophoneManager")
 
     private val map = HashMap<String, LocalMicrophone>()
     private val mapTrigger = MutableStateFlow(0L)
     private val list = MutableStateFlow(emptyList<LocalMicrophone>())
     private val selectedState = MutableStateFlow(LocalMicrophone.Null)
-    private val mutedState = MutableStateFlow(false)
+    private val mutedState = MutableStateFlow(MutedState.None)
 
     val all = list.asStateFlow()
     val selected = selectedState.asStateFlow()
@@ -33,10 +33,26 @@ class LocalMicrophoneManager(private val scope: ConnectorScope) {
         scope.connector.registerLocalMicrophoneEventListener(EventListener())
         scope.connector.selectDefaultMicrophone()
 
+        moderation.collectInScope(scope) {
+            val state = when (it) {
+                MutedState.None -> when (mutedState.value.muted) {
+                    true -> MutedState.Muted
+                    else -> MutedState.None
+                }
+                MutedState.Muted -> MutedState.Muted
+                MutedState.ForceMuted -> MutedState.ForceMuted
+            }
+            mutedState.value = state
+        }
+
         mapTrigger.debounce(500).collectInScope(scope) {
             val temp = map.values.toMutableList()
             temp.sortBy { it.name }
             list.value = temp
+        }
+
+        muted.collectInScope(scope) {
+            logD { "muted = $it" }
         }
 
         selected.collectInScope(scope) {
@@ -60,7 +76,10 @@ class LocalMicrophoneManager(private val scope: ConnectorScope) {
 
     fun requestMutedState(muted: Boolean) {
         if (scope.connector.setMicrophonePrivacy(muted)) {
-            mutedState.value = muted
+            mutedState.value = when (muted) {
+                true -> MutedState.Muted
+                else -> MutedState.None
+            }
         }
     }
 

@@ -8,12 +8,14 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.vidyo.vidyoconnector.R
+import com.vidyo.vidyoconnector.appContext
 import com.vidyo.vidyoconnector.bl.connector.ConnectorManager
 import com.vidyo.vidyoconnector.ui.MainActivity
 
 class ConferenceService : Service() {
     companion object {
         private const val CHANNEL_ID = "notification_channel_id"
+        val ACTION_STOP = "${appContext.packageName}.stop"
     }
 
     private val manager by lazy { NotificationManagerCompat.from(this) }
@@ -33,6 +35,14 @@ class ConferenceService : Service() {
         super.onTaskRemoved(rootIntent)
 
         ConnectorManager.conference.disconnect()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_STOP) {
+            stopForeground(true)
+            stopSelf()
+        }
+        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun createNotificationChannel() {
