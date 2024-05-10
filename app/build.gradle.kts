@@ -5,7 +5,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.22"
 }
 
 val properties = Properties().apply {
@@ -25,13 +25,18 @@ val defaultGoogleAnalyticsId = System.getProperty("VC_DEFAULT_GOOGLE_ANALYTICS_I
     ?: (gradle as ExtensionAware).extra.properties["VC_DEFAULT_GOOGLE_ANALYTICS_ID"]
     ?: ""
 
+val defaultGoogleAnalyticsKey = System.getProperty("VC_DEFAULT_GOOGLE_ANALYTICS_KEY")
+    ?: (gradle as ExtensionAware).extra.properties["VC_DEFAULT_GOOGLE_ANALYTICS_KEY"]
+    ?: ""
+
 android {
-    compileSdk = 31
+    compileSdk = 33
+    namespace = "com.vidyo.vidyoconnector"
 
     defaultConfig {
         applicationId = "com.vidyo.connector"
         minSdk = 23
-        targetSdk = 31
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0.0"
 
@@ -40,6 +45,7 @@ android {
         buildConfigField("String", "DEFAULT_GUEST_ROOM_KEY", "\"$defaultGuestRoomKey\"")
         buildConfigField("String", "DEFAULT_GUEST_ROOM_PIN", "\"$defaultGuestRoomPin\"")
         buildConfigField("String", "DEFAULT_GOOGLE_ANALYTICS_ID", "\"$defaultGoogleAnalyticsId\"")
+        buildConfigField("String", "DEFAULT_GOOGLE_ANALYTICS_KEY", "\"$defaultGoogleAnalyticsKey\"")
     }
 
     val releaseSigningConfig = signingConfigs.create("release") {
@@ -60,11 +66,10 @@ android {
 
     buildFeatures {
         compose = true
-        dataBinding = true
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
         freeCompilerArgs = listOf(
             "-Werror",
             "-Xopt-in=kotlin.RequiresOptIn",
@@ -79,12 +84,12 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.1.1"
+        kotlinCompilerExtensionVersion = "1.4.8"
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -98,35 +103,33 @@ dependencies {
     // Kotlin
     val kotlinVersion: String by rootProject.extra
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     // AppCompat
-    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
     // Compose
-    implementation("androidx.compose.ui:ui:1.1.1")
-    implementation("androidx.compose.ui:ui-tooling:1.1.1")
-    implementation("androidx.compose.foundation:foundation:1.1.1")
-    implementation("androidx.compose.runtime:runtime-livedata:1.1.1")
-    implementation("androidx.activity:activity-compose:1.4.0")
+    implementation("androidx.compose.ui:ui:1.4.3")
+    implementation("androidx.compose.ui:ui-tooling:1.4.3")
+    implementation("androidx.compose.foundation:foundation:1.4.3")
+    implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
+    implementation("androidx.compose.material:material:1.4.3")
+    implementation("androidx.compose.material:material-icons-core:1.4.3")
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")
 
     // Compose Controls
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0")
-
-    // Compose Material
-    implementation("androidx.compose.material:material:1.1.1")
-    implementation("androidx.compose.material:material-icons-core:1.1.1")
-    implementation("androidx.compose.material:material-icons-extended:1.1.1")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     // Lifecycle
+    implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.4.2")
+    implementation("androidx.navigation:navigation-compose:2.6.0")
 
     // Material
-    implementation("com.google.android.material:material:1.6.0")
+    implementation("com.google.android.material:material:1.9.0")
 
     // Ktor
     implementation("io.ktor:ktor-client-core:2.0.1")
@@ -135,4 +138,11 @@ dependencies {
     // ComposableRoutes
     implementation("com.github.MatrixDev.ComposableRoutes:composable-routes-lib:0.1.14")
     kapt("com.github.MatrixDev.ComposableRoutes:composable-routes-processor:0.1.14")
+
+    // Camera X
+    val cameraxVersion = "1.2.1"
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
+    implementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
 }

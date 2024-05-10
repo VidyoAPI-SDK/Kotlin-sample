@@ -35,6 +35,7 @@ fun GoogleAnalyticsScreen() {
         ) {
             TrackingEnabled()
             TrackingId()
+            TrackingKey()
             EventActionsPreferences()
         }
     }
@@ -69,6 +70,20 @@ private fun TrackingId() {
 
     PreferenceTextField(
         name = stringResource(R.string.analytics_tracking_id),
+        value = value,
+        onDisplay = { it.ifEmpty { empty } },
+        onChanged = { preference.value = it },
+    )
+}
+
+@Composable
+private fun TrackingKey() {
+    val preference = LocalConnectorManager.current.analytics.googleTrackingKey
+    val value = preference.collectAsState().value
+    val empty = stringResource(R.string.analytics_empty)
+
+    PreferenceTextField(
+        name = stringResource(R.string.analytics_tracking_key),
         value = value,
         onDisplay = { it.ifEmpty { empty } },
         onChanged = { preference.value = it },

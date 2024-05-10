@@ -1,6 +1,10 @@
 package com.vidyo.vidyoconnector.ui.conference.chats
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -20,7 +24,7 @@ fun ChatMessageSpecial(
 ) {
     val configuration = LocalConfiguration.current
     val time = remember {
-        val locale = ConfigurationCompat.getLocales(configuration)[0]
+        val locale = requireNotNull(ConfigurationCompat.getLocales(configuration)[0])
         val format = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT, locale)
         format.format(message.realTimestamp)
     }

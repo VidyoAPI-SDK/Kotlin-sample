@@ -1,5 +1,6 @@
 package com.vidyo.vidyoconnector.bl.connector.analytics
 
+import com.vidyo.VidyoClient.Connector.ConnectorGoogleAnalyticsOptions
 import com.vidyo.vidyoconnector.R
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
 import com.vidyo.vidyoconnector.bl.connector.preferences.PreferencesManager
@@ -18,17 +19,27 @@ class AnalyticsManager(
     )
 
     val googleEnabled = MutableStateFlow(scope.connector.isGoogleAnalyticsServiceEnabled)
-    val googleTrackingId = MutableStateFlow(scope.connector.googleAnalyticsServiceID.orEmpty())
+    val googleTrackingId = MutableStateFlow("")
+    val googleTrackingKey = MutableStateFlow("")
     val insightEnabled = MutableStateFlow(scope.connector.isInsightsServiceEnabled)
     val insightAddress = MutableStateFlow(scope.connector.insightsServiceUrl.orEmpty())
 
     val events = createAnalyticsEventActionPreferences()
 
     init {
-        combine(googleEnabled, googleTrackingId, ::Pair).collectInScope(scope) {
+        scope.connector.getGoogleAnalyticsOptions {
+            googleTrackingId.value = it?.id.orEmpty()
+            googleTrackingKey.value = it?.key.orEmpty()
+        }
+
+        combine(googleEnabled, googleTrackingId, googleTrackingKey, ::Triple).collectInScope(scope) {
             scope.connector.stopGoogleAnalyticsService()
             if (it.first) {
-                scope.connector.startGoogleAnalyticsService(it.second)
+                val options = ConnectorGoogleAnalyticsOptions().also { options ->
+                    options.id = it.second
+                    options.key = it.third
+                }
+                scope.connector.startGoogleAnalyticsService(options)
             }
         }
 

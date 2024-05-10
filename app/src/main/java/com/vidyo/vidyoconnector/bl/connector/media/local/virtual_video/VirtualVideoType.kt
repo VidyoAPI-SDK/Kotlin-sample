@@ -1,6 +1,6 @@
 package com.vidyo.vidyoconnector.bl.connector.media.local.virtual_video
 
-import com.vidyo.VidyoClient.Device.VirtualVideoSource.VirtualVideoSourceType
+import com.vidyo.VidyoClient.Endpoint.Endpoint.VirtualVideoSourceType
 import kotlin.math.min
 
 enum class VirtualVideoType(val jniValue: VirtualVideoSourceType) {

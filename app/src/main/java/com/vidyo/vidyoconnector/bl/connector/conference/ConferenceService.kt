@@ -7,6 +7,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
 import com.vidyo.vidyoconnector.R
 import com.vidyo.vidyoconnector.appContext
 import com.vidyo.vidyoconnector.bl.connector.ConnectorManager
@@ -39,7 +40,7 @@ class ConferenceService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
-            stopForeground(true)
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
         return super.onStartCommand(intent, flags, startId)

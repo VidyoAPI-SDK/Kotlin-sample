@@ -6,12 +6,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 
 @Composable
 fun NavBackIcon(modifier: Modifier = Modifier) {
     val navController = LocalNavController.current
-    if (navController.backQueue.isNotEmpty()) {
+    val currentBackStack = navController.currentBackStack.collectAsState()
+
+    if (currentBackStack.value.isNotEmpty()) {
         NavBackIcon(modifier = modifier) {
             navController.popBackStack()
         }

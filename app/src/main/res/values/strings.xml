@@ -34,7 +34,7 @@
     <!-- AboutSettings -->
     <string name="settingsAbout_title">About VidyoConnector</string>
     <string name="settingsAbout_message"><![CDATA[Vidyo\'s technology is covered by one or more issued or pending United States patents, as more fully detailed on <a href=\'http://www.vidyo.com/company/patent-notices\'>the Patent Notice page of Vidyo\'s website</a>, as well as issued and pending international patents and may include open source software, as further explained under <a href=\'http://www.vidyo.com/wp-content/uploads/Vidyo-OSS-Attributions.pdf\'>Vidyo OSS Attributions</a>. VIDYO, Vidyo logos and icons and trademarks of the VIDYO family of products are trademarks or registered trademarks of Vidyo, Inc., registered with the United States Patent and Trademark Office and/or in other jurisdictions.]]></string>
-    <string name="settingsAbout_copyright">Copyright&#169; 2010&#8211;2022 Vidyo, Inc.</string>
+    <string name="settingsAbout_copyright">Copyright&#169; 2010&#8211;2024 Vidyo, Inc.</string>
 
     <!-- CpuTradeOffProfile -->
     <string name="CpuTradeOffProfile_Low">Low</string>
@@ -69,6 +69,7 @@
     <!-- Analytics Fragments -->
     <string name="analytics_enabled">Enabled</string>
     <string name="analytics_tracking_id">Tracking ID</string>
+    <string name="analytics_tracking_key">Tracking Key</string>
     <string name="analytics_ip_address">IP Address or URL</string>
     <string name="analytics_insight_error">Vidyo Insights cannot be enabled with empty address</string>
     <string name="analytics_empty">empty</string>

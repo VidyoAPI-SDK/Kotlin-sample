@@ -23,6 +23,16 @@ class LogsManager(private val scope: ConnectorScope, preferences: PreferencesMan
     companion object : Loggable.Tag("LogsManager") {
         private val logsFolder = File(ConnectorManager.rootFolder, "logs")
         private val logsZipFile = File(ConnectorManager.rootFolder, "logs.zip")
+
+        // INFO: for internal testing, production builds should have only VidyoConnector & VidyoClient tags
+        private val defaultDebugTags = listOf(
+            "VidyoConnector",
+            "VidyoClient",
+            "LmiDeviceManager",
+            "LmiAndroid",
+            "LmiAndroidJava",
+        )
+
         val logsFile = File(logsFolder, "VidyoConnector.log")
     }
 
@@ -34,19 +44,13 @@ class LogsManager(private val scope: ConnectorScope, preferences: PreferencesMan
 
     val level = preferences.createPreferencesProperty(
         key = "log_level",
-        read = {
-            LogLevel.fromOrdinal(getInt(it, -1)) {
-                LogLevel.fromJniValue(scope.connector.getLogLevel(loggerTypes.first())) {
-                    LogLevel.Production
-                }
-            }
-        },
+        read = { LogLevel.fromOrdinal(getInt(it, -1)) { LogLevel.Advanced } },
         write = { key, value -> putInt(key, value.ordinal) },
     )
 
     val filter = preferences.createPreferencesProperty(
         key = "log_filter",
-        read = { getString(it, null) ?: "debug@VidyoConnector debug@VidyoClient" },
+        read = { getString(it, null) ?: defaultDebugTags.joinToString(" ") { tag -> "debug@$tag" } },
         write = { key, value -> putString(key, value) },
     )
 

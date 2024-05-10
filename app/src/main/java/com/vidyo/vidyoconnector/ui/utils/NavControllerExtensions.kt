@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptionsBuilder
 
 fun NavOptionsBuilder.clearBackStack(navController: NavController) {
-    val record = navController.backQueue.firstOrNull { it.destination.route != null }
+    val record = navController.currentBackStack.value.firstOrNull { it.destination.route != null }
     if (record != null) {
         popUpTo(record.destination.route.orEmpty()) {
             inclusive = true

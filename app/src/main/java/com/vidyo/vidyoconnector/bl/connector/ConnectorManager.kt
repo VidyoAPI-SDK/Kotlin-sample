@@ -33,6 +33,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
 import org.json.JSONObject
 import java.io.File
 
@@ -70,9 +73,17 @@ object ConnectorManager {
         if (!ConnectorPkg.initialize()) {
             throw Exception("ConnectorPkg.initialize() failed")
         }
-        if (BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID.isNotEmpty()) {
-            val json = "{\"googleAnalyticsDefaultId\":\"${BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID}\"}"
-            if (!ConnectorPkg.setExperimentalOptions(json)) {
+
+        val googleAnalyticsId = BuildConfig.DEFAULT_GOOGLE_ANALYTICS_ID
+        val googleAnalyticsKey = BuildConfig.DEFAULT_GOOGLE_ANALYTICS_KEY
+        if (googleAnalyticsId.isNotEmpty() && googleAnalyticsKey.isNotEmpty()) {
+            val json = buildJsonObject {
+                putJsonObject("GoogleAnalyticsData") {
+                    put("id", googleAnalyticsId)
+                    put("key", googleAnalyticsKey)
+                }
+            }
+            if (!ConnectorPkg.setExperimentalOptions(json.toString())) {
                 throw Exception("ConnectorPkg.setExperimentalOptions() failed")
             }
         }

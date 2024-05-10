@@ -11,7 +11,11 @@ import androidx.navigation.compose.rememberNavController
 import com.vidyo.vidyoconnector.bl.ProtocolHandler
 import com.vidyo.vidyoconnector.bl.connector.ConnectorManager
 import com.vidyo.vidyoconnector.bl.connector.conference.ConferenceState
-import com.vidyo.vidyoconnector.ui.utils.*
+import com.vidyo.vidyoconnector.ui.utils.LocalActivity
+import com.vidyo.vidyoconnector.ui.utils.LocalConnectorManager
+import com.vidyo.vidyoconnector.ui.utils.LocalNavController
+import com.vidyo.vidyoconnector.ui.utils.PermissionsGuard
+import com.vidyo.vidyoconnector.ui.utils.clearBackStack
 import com.vidyo.vidyoconnector.ui.utils.styles.VcColors
 import dev.matrix.compose_routes.NavRoutes
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -68,7 +72,7 @@ private fun Navigation(activity: Activity) {
                 else -> NavRoutes.JoinScreen()
             }
 
-            val firstEntry = navController.backQueue.firstOrNull { entry ->
+            val firstEntry = navController.currentBackStack.value.firstOrNull { entry ->
                 !entry.destination.route.isNullOrEmpty()
             }
 

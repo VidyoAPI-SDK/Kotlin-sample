@@ -58,6 +58,7 @@ private fun trackIncomingCallStateV31(manager: TelephonyManager) = channelFlow {
 private fun trackIncomingCallStateBase(manager: TelephonyManager) = channelFlow {
     val callback = withContext(Dispatchers.Main.immediate) {
         object : android.telephony.PhoneStateListener() {
+            @Deprecated("Deprecated in Java", replaceWith = ReplaceWith(""))
             override fun onCallStateChanged(state: Int, phoneNumber: String?) {
                 trySend(state)
             }
