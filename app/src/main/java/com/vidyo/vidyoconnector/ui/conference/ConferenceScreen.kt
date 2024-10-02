@@ -194,6 +194,7 @@ private fun JumpBarPopup(
         ParticipantsIcon(modifier = defaultModifier)
         ChatsIcon(modifier = defaultModifier)
         CameraEffectIcon(modifier = defaultModifier)
+        TorchIcon(modifier = defaultModifier)
         CameraControlsIcon(cameraControlsActive, modifier = defaultModifier)
         AutoJoinOverlayIcon(autoJoinMessageVisible, modifier = defaultModifier)
     }

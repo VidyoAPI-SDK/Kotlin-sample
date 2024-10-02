@@ -30,7 +30,7 @@ val defaultGoogleAnalyticsKey = System.getProperty("VC_DEFAULT_GOOGLE_ANALYTICS_
     ?: ""
 
 android {
-    compileSdk = 33
+    compileSdk = 34
     namespace = "com.vidyo.vidyoconnector"
 
     defaultConfig {
@@ -109,24 +109,24 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
 
     // Compose
-    implementation("androidx.compose.ui:ui:1.4.3")
-    implementation("androidx.compose.ui:ui-tooling:1.4.3")
-    implementation("androidx.compose.foundation:foundation:1.4.3")
-    implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
-    implementation("androidx.compose.material:material:1.4.3")
-    implementation("androidx.compose.material:material-icons-core:1.4.3")
-    implementation("androidx.compose.material:material-icons-extended:1.4.3")
+    implementation("androidx.compose.ui:ui:1.6.7")
+    implementation("androidx.compose.ui:ui-tooling:1.6.7")
+    implementation("androidx.compose.foundation:foundation:1.6.7")
+    implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
+    implementation("androidx.compose.material:material:1.6.7")
+    implementation("androidx.compose.material:material-icons-core:1.6.7")
+    implementation("androidx.compose.material:material-icons-extended:1.6.7")
 
     // Compose Controls
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     // Lifecycle
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.6.0")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     // Material
     implementation("com.google.android.material:material:1.9.0")
