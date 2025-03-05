@@ -29,6 +29,14 @@ val defaultGoogleAnalyticsKey = System.getProperty("VC_DEFAULT_GOOGLE_ANALYTICS_
     ?: (gradle as ExtensionAware).extra.properties["VC_DEFAULT_GOOGLE_ANALYTICS_KEY"]
     ?: ""
 
+val defaultVidyoInsightsEnabled = System.getProperty("VC_DEFAULT_INSIGHTS_ENABLED")
+    ?: (gradle as ExtensionAware).extra.properties["VC_DEFAULT_INSIGHTS_ENABLED"]
+    ?: ""
+
+val defaultVidyoInsightsUrl = System.getProperty("VC_DEFAULT_INSIGHTS_URL")
+    ?: (gradle as ExtensionAware).extra.properties["VC_DEFAULT_INSIGHTS_URL"]
+    ?: ""
+
 android {
     compileSdk = 33
     namespace = "com.vidyo.vidyoconnector"
@@ -46,6 +54,8 @@ android {
         buildConfigField("String", "DEFAULT_GUEST_ROOM_PIN", "\"$defaultGuestRoomPin\"")
         buildConfigField("String", "DEFAULT_GOOGLE_ANALYTICS_ID", "\"$defaultGoogleAnalyticsId\"")
         buildConfigField("String", "DEFAULT_GOOGLE_ANALYTICS_KEY", "\"$defaultGoogleAnalyticsKey\"")
+        buildConfigField("String", "DEFAULT_INSIGHTS_ENABLED", "\"$defaultVidyoInsightsEnabled\"")
+        buildConfigField("String", "DEFAULT_INSIGHTS_URL", "\"$defaultVidyoInsightsUrl\"")
     }
 
     val releaseSigningConfig = signingConfigs.create("release") {

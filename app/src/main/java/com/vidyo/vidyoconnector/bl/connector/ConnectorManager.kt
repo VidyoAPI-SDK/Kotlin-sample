@@ -97,6 +97,15 @@ object ConnectorManager {
             LogsManager.logsFile.absolutePath,
             0,
         )
+
+        val vidyoInsightsUrl = BuildConfig.DEFAULT_INSIGHTS_URL
+        val vidyoInsightsEnabled = BuildConfig.DEFAULT_INSIGHTS_ENABLED
+
+        if (vidyoInsightsEnabled.toBoolean() == true
+            && vidyoInsightsUrl.isNotEmpty()) {
+            connector.startInsightsService(vidyoInsightsUrl)
+        }
+
         return ConnectorScope(context, connector)
     }
 
