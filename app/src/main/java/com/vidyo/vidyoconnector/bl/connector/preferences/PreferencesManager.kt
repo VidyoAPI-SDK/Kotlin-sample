@@ -2,6 +2,7 @@ package com.vidyo.vidyoconnector.bl.connector.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.vidyo.vidyoconnector.appContext
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
 import com.vidyo.vidyoconnector.bl.connector.preferences.values.AudioCodec
 import com.vidyo.vidyoconnector.bl.connector.preferences.values.Bitrate
@@ -83,6 +84,11 @@ class PreferencesManager(private val scope: ConnectorScope) {
     val maxReceiveBitRate = createRuntimeProperty(
         read = { Bitrate.fromJniValue(scope.connector.maxReceiveBitRate) },
         write = { scope.connector.maxReceiveBitRate = Bitrate.toJniValue(it) },
+    )
+
+    val pip = createRuntimeProperty(
+        read = { appContext.isPipEnabled },
+        write = { appContext.isPipEnabled = it },
     )
 
     fun <T> createRuntimeProperty(read: () -> T, write: (T) -> Unit): RuntimeProperty<T> {

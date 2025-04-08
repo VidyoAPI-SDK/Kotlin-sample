@@ -2,6 +2,7 @@ package com.vidyo.vidyoconnector.bl.connector
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.json.buildJsonObject
@@ -41,16 +43,20 @@ import java.io.File
 
 @SuppressLint("StaticFieldLeak")
 object ConnectorManager {
+    private const val LOG_TAG = "ConnectorManager"
+    private const val DEFAULT_PARTICIPANT_COUNT = 3
+    private const val PIP_PARTICIPANTS_COUNT = 1
+
     val rootFolder = File(appContext.filesDir, "vidyo")
 
     private val defaultViewStyle = Connector.ConnectorViewStyle.VIDYO_CONNECTORVIEWSTYLE_Default
-    private val layout = ConnectorLayout(appContext)
+    val layout = ConnectorLayout(appContext)
     private val scope = createScope(layout.context)
     private val appResumedTokens = ArrayList<Any>()
     private val layoutRequestQueue = ArrayList<(View) -> Unit>()
 
     val version = scope.connector.version.orEmpty()
-    val numberOfParticipants = MutableStateFlow(3)
+    val numberOfParticipants = MutableStateFlow(DEFAULT_PARTICIPANT_COUNT)
 
     val preferences = PreferencesManager(scope)
     val logs = LogsManager(scope, preferences)
@@ -62,9 +68,34 @@ object ConnectorManager {
     val chats = ChatsManager(scope, media, participants, conference)
     val virtualBackground = VirtualBackgroundManager(scope)
 
+    private val _pipActiveState = MutableStateFlow(false)
+    val pipActiveState = _pipActiveState.asStateFlow()
+
     init {
         numberOfParticipants.collectInScope(scope) {
+            Log.d(LOG_TAG, "assignViewToCompositeRenderer numberOfParticipants: $it")
             scope.connector.assignViewToCompositeRenderer(layout, defaultViewStyle, it)
+        }
+    }
+
+    /**
+     *
+     * @param isPipActive Boolean
+     */
+    fun updatePipActiveState(isPipActive: Boolean){
+        Log.d(LOG_TAG, "updatePipActiveState, isPipActive: $isPipActive")
+        _pipActiveState.value = isPipActive
+        // To hide self preview in PIP mode since PIP window is small in size
+        scope.connector.showPreview(!isPipActive)
+        // To show only one participant in PIP mode since PIP window is small in size
+        numberOfParticipants.value = if(isPipActive) {
+            PIP_PARTICIPANTS_COUNT
+        }else{
+            DEFAULT_PARTICIPANT_COUNT
+        }
+        if(pipActiveState.value) {
+            // For PIP mode, VIDYO_CONNECTORMODE_Foreground will work.
+            scope.connector.setMode(Connector.ConnectorMode.VIDYO_CONNECTORMODE_Foreground)
         }
     }
 
@@ -92,7 +123,7 @@ object ConnectorManager {
         val connector = Connector(
             null,
             defaultViewStyle,
-            3,
+            DEFAULT_PARTICIPANT_COUNT,
             "",
             LogsManager.logsFile.absolutePath,
             0,

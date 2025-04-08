@@ -8,6 +8,11 @@ buildscript {
     val nexusUsername by extra { System.getProperty("com.vidyo.nexus.username").orEmpty() }
     val nexusPassword by extra { System.getProperty("com.vidyo.nexus.password").orEmpty() }
 
+    repositories {
+        google()
+        mavenCentral()
+    }
+
     dependencies {
         classpath("com.android.tools.build:gradle:8.1.4")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")

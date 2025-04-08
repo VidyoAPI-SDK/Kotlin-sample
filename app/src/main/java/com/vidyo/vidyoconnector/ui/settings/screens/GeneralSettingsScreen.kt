@@ -46,7 +46,7 @@ fun GeneralSettingsScreen() {
             NetworkForMediaPreference(enabled = settingsEnabled)
             NumberOfParticipantsPreference(enabled = settingsEnabled)
             SelfViewOptionsPreference(enabled = settingsEnabled)
-
+            PipPreference(enabled = settingsEnabled)
             Spacer(modifier = Modifier.height(50.dp))
 
             PreferenceCategory(name = R.string.preference_auto_reconnect_title)
@@ -151,6 +151,19 @@ private fun AutoReconnectPreference(enabled: Boolean) {
 
     PreferenceSwitch(
         name = stringResource(R.string.preference_auto_reconnect_title),
+        value = state.value,
+        enabled = enabled,
+        onChanged = { preference.value = it },
+    )
+}
+
+@Composable
+private fun PipPreference(enabled: Boolean) {
+    val preference = LocalConnectorManager.current.preferences.pip
+    val state = preference.collectAsState()
+
+    PreferenceSwitch(
+        name = stringResource(R.string.preference_enable_pip),
         value = state.value,
         enabled = enabled,
         onChanged = { preference.value = it },

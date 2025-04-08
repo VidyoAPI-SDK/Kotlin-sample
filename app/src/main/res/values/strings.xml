@@ -34,7 +34,7 @@
     <!-- AboutSettings -->
     <string name="settingsAbout_title">About VidyoConnector</string>
     <string name="settingsAbout_message"><![CDATA[Vidyo\'s technology is covered by one or more issued or pending United States patents, as more fully detailed on <a href=\'http://www.vidyo.com/company/patent-notices\'>the Patent Notice page of Vidyo\'s website</a>, as well as issued and pending international patents and may include open source software, as further explained under <a href=\'http://www.vidyo.com/wp-content/uploads/Vidyo-OSS-Attributions.pdf\'>Vidyo OSS Attributions</a>. VIDYO, Vidyo logos and icons and trademarks of the VIDYO family of products are trademarks or registered trademarks of Vidyo, Inc., registered with the United States Patent and Trademark Office and/or in other jurisdictions.]]></string>
-    <string name="settingsAbout_copyright">Copyright&#169; 2010&#8211;2024 Vidyo, Inc.</string>
+    <string name="settingsAbout_copyright">Copyright&#169; 2010&#8211;2025 Vidyo, Inc.</string>
 
     <!-- CpuTradeOffProfile -->
     <string name="CpuTradeOffProfile_Low">Low</string>
@@ -65,7 +65,7 @@
     <string name="preference_type_of_analytics_title">Type of Analytics</string>
     <string name="preference_googleAnalytics">Google Analytics</string>
     <string name="preference_insightsAnalytics">Vidyo Insights Analytics</string>
-
+    <string name="preference_enable_pip">Enable PIP</string>
     <!-- Analytics Fragments -->
     <string name="analytics_enabled">Enabled</string>
     <string name="analytics_tracking_id">Tracking ID</string>
@@ -224,5 +224,13 @@
     <!-- CameraControlsIcon -->
     <string name="cameraControlsIcon_title">Remote Camera Control</string>
     <string name="cameraControlsIcon_localCamera">Local Camera - %s</string>
+
+    <!-- PIP -->
+    <string name="CONFERENCE__contentdesc_mic_muted">Mic Muted</string>
+    <string name="CONFERENCE__contentdesc_mic_unmuted">Mic Unmuted</string>
+    <string name="CONFERENCE__contentdesc_camera_muted">Camera Muted</string>
+    <string name="CONFERENCE__contentdesc_camera_unmuted">Camera Unmuted</string>
+    <string name="CONFERENCESERVICE__notification_end_call">End call</string>
+    <!-- PIP -->
 
 </resources>

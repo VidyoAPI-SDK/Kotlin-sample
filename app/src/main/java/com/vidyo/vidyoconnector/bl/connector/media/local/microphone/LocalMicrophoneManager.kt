@@ -42,6 +42,7 @@ class LocalMicrophoneManager(private val scope: ConnectorScope, moderation: Muta
                 MutedState.Muted -> MutedState.Muted
                 MutedState.ForceMuted -> MutedState.ForceMuted
             }
+            logD { "moderation mic muted state: $muted" }
             mutedState.value = state
         }
 
@@ -75,6 +76,7 @@ class LocalMicrophoneManager(private val scope: ConnectorScope, moderation: Muta
     }
 
     fun requestMutedState(muted: Boolean) {
+        logD { "requestMutedState mic muted: $muted" }
         if (scope.connector.setMicrophonePrivacy(muted)) {
             mutedState.value = when (muted) {
                 true -> MutedState.Muted

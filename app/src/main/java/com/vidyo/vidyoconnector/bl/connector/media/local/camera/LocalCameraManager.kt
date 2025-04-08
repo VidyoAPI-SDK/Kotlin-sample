@@ -4,12 +4,17 @@ import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.VidyoClient.Device.Device
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
 import com.vidyo.vidyoconnector.bl.connector.media.MutedState
+import com.vidyo.vidyoconnector.utils.Loggable
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
 import com.vidyo.vidyoconnector.utils.coroutines.trigger
+import com.vidyo.vidyoconnector.utils.logD
 import kotlinx.coroutines.flow.*
 import com.vidyo.VidyoClient.Device.LocalCamera as VcLocalCamera
 
 class LocalCameraManager(private val scope: ConnectorScope, moderation: StateFlow<MutedState>) {
+
+    companion object : Loggable.Tag("LocalCameraManager")
+
     private val map = HashMap<String, LocalCamera>()
     private val mapTrigger = MutableStateFlow(0L)
     private val allState = MutableStateFlow(emptyList<LocalCamera>())
@@ -35,6 +40,7 @@ class LocalCameraManager(private val scope: ConnectorScope, moderation: StateFlo
                 MutedState.Muted -> MutedState.Muted
                 MutedState.ForceMuted -> MutedState.ForceMuted
             }
+            logD { "moderation camera muted state: $muted" }
             mutedState.value = state
         }
 
@@ -64,6 +70,7 @@ class LocalCameraManager(private val scope: ConnectorScope, moderation: StateFlo
     }
 
     fun requestMutedState(muted: Boolean) {
+        logD { "requestMutedState camera muted: $muted" }
         if (scope.connector.setCameraPrivacy(muted)) {
             mutedState.value = when (muted) {
                 true -> MutedState.Muted

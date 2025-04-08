@@ -48,6 +48,7 @@ fun ConferenceScreen() {
     val moreOptions = rememberSaveable { mutableStateOf(false) }
     val autoJoinMessageVisible = rememberSaveable { mutableStateOf(true) }
     val cameraControlsActive = remember { mutableStateOf<Camera?>(null) }
+    val pipActiveState = manager.pipActiveState.collectAsState()
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (jumpBar, jumpBarPopup, video, message, ptz) = createRefs()
@@ -56,79 +57,84 @@ fun ConferenceScreen() {
             width = Dimension.fillToConstraints
             height = Dimension.fillToConstraints
             top.linkTo(parent.top)
-            bottom.linkTo(jumpBar.top)
+            // To align ConferenceView to bottom of parent in case of PIP since in PIP we are hiding the JumpBar.
+            bottom.linkTo(if(pipActiveState.value) {parent.bottom} else {jumpBar.top} )
             end.linkTo(parent.end)
             start.linkTo(parent.start)
         })
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .constrainAs(message) {
-                    top.linkTo(parent.top, 32.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
+        // To Show/Hide extra overlay/controls from PIP window, since in PIP, only PIP actions are clickable.
+        if(!pipActiveState.value) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .constrainAs(message) {
+                        top.linkTo(parent.top, 32.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                    }
+                    .padding(horizontal = 16.dp),
+            ) {
+                val screenShareActive = manager.media.localScreenShare.active.collectAsState()
+                if (screenShareActive.value) {
+                    TooltipMessage(message = stringResource(R.string.conference_shareActive))
                 }
-                .padding(horizontal = 16.dp),
-        ) {
-            val screenShareActive = manager.media.localScreenShare.active.collectAsState()
-            if (screenShareActive.value) {
-                TooltipMessage(message = stringResource(R.string.conference_shareActive))
+
+                val audioOnly = manager.media.audioOnly.collectAsState()
+                if (audioOnly.value) {
+                    TooltipMessage(message = stringResource(R.string.conference_audioOnly))
+                }
+
+                val conferenceState = manager.conference.conference.collectAsState().value.state
+                if (conferenceState is ConferenceState.Reconnecting) {
+                    ReconnectingMessage(state = conferenceState)
+                }
             }
 
-            val audioOnly = manager.media.audioOnly.collectAsState()
-            if (audioOnly.value) {
-                TooltipMessage(message = stringResource(R.string.conference_audioOnly))
-            }
+            JumpBar(
+                moreOptions = moreOptions,
+                modifier = Modifier.constrainAs(jumpBar) {
+                    width = Dimension.fillToConstraints
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                },
+            )
 
-            val conferenceState = manager.conference.conference.collectAsState().value.state
-            if (conferenceState is ConferenceState.Reconnecting) {
-                ReconnectingMessage(state = conferenceState)
-            }
-        }
 
-        JumpBar(
-            moreOptions = moreOptions,
-            modifier = Modifier.constrainAs(jumpBar) {
+            Box(modifier = Modifier.constrainAs(jumpBarPopup) {
                 width = Dimension.fillToConstraints
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-            },
-        )
+                bottom.linkTo(jumpBar.top)
+            }) {
+                AnimatedVisibility(
+                    visible = moreOptions.value,
+                    enter = toolbarInAnimation,
+                    exit = toolbarOutAnimation,
+                ) {
+                    JumpBarPopup(
+                        cameraControlsActive = cameraControlsActive,
+                        autoJoinMessageVisible = autoJoinMessageVisible,
+                    )
+                }
+            }
 
-        Box(modifier = Modifier.constrainAs(jumpBarPopup) {
-            width = Dimension.fillToConstraints
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            bottom.linkTo(jumpBar.top)
-        }) {
-            AnimatedVisibility(
-                visible = moreOptions.value,
-                enter = toolbarInAnimation,
-                exit = toolbarOutAnimation,
-            ) {
-                JumpBarPopup(
-                    cameraControlsActive = cameraControlsActive,
-                    autoJoinMessageVisible = autoJoinMessageVisible,
+            val camera = cameraControlsActive.value
+            if (camera != null) {
+                CameraControlsPanel(
+                    camera = camera,
+                    onClose = { cameraControlsActive.value = null },
+                    modifier = Modifier.constrainAs(ptz) {
+                        end.linkTo(parent.end)
+                        bottom.linkTo(jumpBarPopup.top)
+                    }
                 )
             }
         }
-
-        val camera = cameraControlsActive.value
-        if (camera != null) {
-            CameraControlsPanel(
-                camera = camera,
-                onClose = { cameraControlsActive.value = null },
-                modifier = Modifier.constrainAs(ptz) {
-                    end.linkTo(parent.end)
-                    bottom.linkTo(jumpBarPopup.top)
-                }
-            )
-        }
     }
-
-    AutoJoinOverlay(autoJoinMessageVisible)
+    if(!pipActiveState.value) {
+        AutoJoinOverlay(autoJoinMessageVisible)
+    }
 }
 
 @Composable
@@ -194,6 +200,7 @@ private fun JumpBarPopup(
         ParticipantsIcon(modifier = defaultModifier)
         ChatsIcon(modifier = defaultModifier)
         CameraEffectIcon(modifier = defaultModifier)
+        TorchIcon(modifier = defaultModifier)
         CameraControlsIcon(cameraControlsActive, modifier = defaultModifier)
         AutoJoinOverlayIcon(autoJoinMessageVisible, modifier = defaultModifier)
     }

@@ -1,14 +1,13 @@
 package com.vidyo.vidyoconnector
 
 import android.app.Application
-import android.content.Context
 
-@Suppress("unused")
 class App : Application() {
     init {
         appContext = this
     }
+    var isPipEnabled: Boolean = true
 }
 
-lateinit var appContext: Context
+lateinit var appContext: App
     private set

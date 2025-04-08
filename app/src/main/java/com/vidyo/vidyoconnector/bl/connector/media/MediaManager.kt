@@ -13,11 +13,15 @@ import com.vidyo.vidyoconnector.bl.connector.media.local.virtual_video.VirtualVi
 import com.vidyo.vidyoconnector.bl.connector.media.remote.camera.RemoteCameraManager
 import com.vidyo.vidyoconnector.bl.connector.media.remote.microphone.RemoteMicrophoneManager
 import com.vidyo.vidyoconnector.bl.connector.media.remote.share.RemoteScreenShareManager
+import com.vidyo.vidyoconnector.utils.Loggable
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
+import com.vidyo.vidyoconnector.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class MediaManager(scope: ConnectorScope, conference: ConferenceManager) {
+    companion object : Loggable.Tag("MediaManager")
+
     private val virtualVideo = VirtualVideoManager(scope)
     private val audioOnlyState = MutableStateFlow(false)
     private val localCameraModeration = MutableStateFlow(MutedState.None)
@@ -83,6 +87,7 @@ class MediaManager(scope: ConnectorScope, conference: ConferenceManager) {
                 }
                 else -> Unit
             }
+            logD { "onModerationCommandReceived state: ${state.name}, deviceType: ${deviceType?.name}" }
         }
     }
 }

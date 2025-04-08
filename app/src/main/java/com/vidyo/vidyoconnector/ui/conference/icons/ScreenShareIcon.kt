@@ -69,7 +69,7 @@ fun ScreenShareIcon(modifier: Modifier = Modifier) {
         SelectFrameRateDialog {
             if (it != null) {
                 frameRateType.value = it
-                result.launch(source.createScreenCaptureIntent())
+                source.createScreenCaptureIntent()?.let { it1 -> result.launch(it1) }
             }
             frameRateDialog.value = false
         }

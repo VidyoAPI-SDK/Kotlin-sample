@@ -82,8 +82,10 @@ class DeviceScreenShareSource(private val context: Context) {
         var mirrorInfo: MirrorInfo? = null
         try {
             projection.registerCallback(mediaCallback, handler)
+            // To resolve [VIDVCB-7901] -> Only get display size one time, and not in loop
+            // otherwise on PIP get display size will return the PIP window size which is much small than actual and sharing becomes distorted.
+            val displaySize = getDisplaySize(windowManager)
             while (active) {
-                val displaySize = getDisplaySize(windowManager)
                 if (mirrorInfo?.displaySize != displaySize) {
                     mirrorInfo?.release()
 
