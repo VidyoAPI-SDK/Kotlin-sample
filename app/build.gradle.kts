@@ -38,13 +38,13 @@ val defaultVidyoInsightsUrl = System.getProperty("VC_DEFAULT_INSIGHTS_URL")
     ?: ""
 
 android {
-    compileSdk = 34
+    compileSdk = 35
     namespace = "com.vidyo.vidyoconnector"
 
     defaultConfig {
         applicationId = "com.vidyo.connector"
-        minSdk = 23
-        targetSdk = 33
+        minSdk = 26
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
 
@@ -150,7 +150,7 @@ dependencies {
     kapt("com.github.MatrixDev.ComposableRoutes:composable-routes-processor:0.1.14")
 
     // Camera X
-    val cameraxVersion = "1.2.1"
+    val cameraxVersion = "1.4.2"
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
     implementation("androidx.camera:camera-extensions:$cameraxVersion")

@@ -2,7 +2,6 @@ package com.vidyo.vidyoconnector.bl.connector.virtual_background
 
 import androidx.compose.runtime.*
 import com.banuba.sdk.utils.ContextProvider
-import com.banuba.utils.FileUtilsNN
 import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.VidyoClient.Connector.ConnectorCameraEffectInfo
 import com.vidyo.prepareBnbResources
@@ -30,7 +29,7 @@ class VirtualBackgroundManager(private val scope: ConnectorScope) {
     val effect = effectState.asStateFlow()
 
     init {
-        FileUtilsNN.setContext(scope.context)
+
         ContextProvider.setContext(scope.context)
 
         fun VirtualBackgroundEffect.isVirtualBackground(): Boolean {

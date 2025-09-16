@@ -36,6 +36,7 @@ fun PermissionsGuard(activity: Activity, content: @Composable () -> Unit) {
     val preferences = remember {
         activity.getSharedPreferences("permissions", Context.MODE_PRIVATE)
     }
+    val conferenceManager = LocalConnectorManager.current.conference
 
     fun checkPermissions() = basicPermissions.maxOf {
         if (context.checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED) {
@@ -50,6 +51,8 @@ fun PermissionsGuard(activity: Activity, content: @Composable () -> Unit) {
     // TODO simplify (early return) when fixed - https://issuetracker.google.com/issues/205344323
     val state = remember { mutableStateOf(checkPermissions()) }
     if (state.value == PermissionState.Granted) {
+        // Start Conference service only after all permissions are granted.
+        conferenceManager.startFGService()
         content()
     } else {
         if (state.value == PermissionState.Rejected) {

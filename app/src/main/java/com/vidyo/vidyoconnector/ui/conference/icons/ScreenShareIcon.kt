@@ -1,5 +1,6 @@
 package com.vidyo.vidyoconnector.ui.conference.icons
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.vidyo.vidyoconnector.App
 import com.vidyo.vidyoconnector.R
 import com.vidyo.vidyoconnector.bl.connector.media.local.screen_share.source.DeviceScreenShareSource
 import com.vidyo.vidyoconnector.bl.connector.media.local.virtual_video.VirtualVideoFrameRate
@@ -43,6 +45,9 @@ fun ScreenShareIcon(modifier: Modifier = Modifier) {
     val result = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = {
+            // Set global observer to true when Screen share permission given.
+            (context.applicationContext as App).isMediaProjectionSet.value = true
+            Log.d("ConferenceService", "isMediaProjectionSet true in ScreenShareIcon")
             val flow = source.handleScreenCaptureResult(it)
             if (flow != null) {
                 manager.start(flow, frameRateType.value)

@@ -1,6 +1,7 @@
 package com.vidyo.vidyoconnector.bl.connector.conference
 
 import android.content.Intent
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.vidyo.VidyoClient.Connector.Connector
 import com.vidyo.vidyoconnector.bl.connector.ConnectorScope
@@ -27,19 +28,27 @@ class ConferenceManager(private val scope: ConnectorScope) {
     init {
         scope.connector.registerReconnectEventListener(ReconnectEventListener())
 
+        conferenceState.collectInScope(scope) {
+            logD { "conference = $it" }
+            if (it.state is ConferenceState.Error) {
+                showToast(it.state.getAutoToastMessage(scope.context))
+            }
+        }
+    }
+
+    /**
+     * Start Conference service as a Foreground service only
+     * When all permissions are granted by user.
+     */
+    fun startFGService() {
+        Log.d("ConferenceService", "startFGService")
         conferenceState.map { it.state.isActive }.distinctUntilChanged().collectInScope(scope) {
             val intent = Intent(scope.context, ConferenceService::class.java)
             if (!it) {
                 intent.action = ConferenceService.ACTION_STOP
             }
             ContextCompat.startForegroundService(scope.context, intent)
-        }
-
-        conferenceState.collectInScope(scope) {
-            logD { "conference = $it" }
-            if (it.state is ConferenceState.Error) {
-                showToast(it.state.getAutoToastMessage(scope.context))
-            }
+            Log.d("ConferenceService", "startFGService startForegroundService")
         }
     }
 
