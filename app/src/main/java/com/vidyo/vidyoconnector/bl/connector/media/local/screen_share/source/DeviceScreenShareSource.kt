@@ -211,7 +211,7 @@ class DeviceScreenShareSource(private val context: Context) {
                 imageReader.surface,
                 null,
                 handler,
-            )
+            )!!
         }
 
         fun release() {

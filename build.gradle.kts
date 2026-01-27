@@ -3,7 +3,7 @@ val nexusUsername: String by extra
 val nexusPassword: String by extra
 
 buildscript {
-    val kotlinVersion by extra { "1.8.22" }
+    val kotlinVersion by extra { "1.9.25" }
     val nexusUrl by extra { System.getProperty("com.vidyo.nexus.url").orEmpty() }
     val nexusUsername by extra { System.getProperty("com.vidyo.nexus.username").orEmpty() }
     val nexusPassword by extra { System.getProperty("com.vidyo.nexus.password").orEmpty() }
@@ -14,7 +14,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.6.0")
+        classpath("com.android.tools.build:gradle:8.7.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 

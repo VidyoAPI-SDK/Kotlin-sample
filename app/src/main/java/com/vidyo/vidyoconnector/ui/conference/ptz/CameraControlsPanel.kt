@@ -10,9 +10,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
+// TODO: Migrate from deprecated RippleTheme to new Indication APIs
+// import androidx.compose.material.ripple.LocalRippleTheme
+// import androidx.compose.material.ripple.RippleAlpha
+// import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +36,8 @@ import com.vidyo.vidyoconnector.ui.utils.LocalConnectorManager
 fun CameraControlsPanel(camera: Camera, onClose: () -> Unit, modifier: Modifier = Modifier) {
     CompositionLocalProvider(
         LocalContentColor provides Color.White,
-        LocalRippleTheme provides CustomRippleTheme,
+        // TODO: Migrate from deprecated RippleTheme
+        // LocalRippleTheme provides CustomRippleTheme,
     ) {
         Column(modifier = modifier.width(182.dp)) {
             Title(camera, onClose, modifier = Modifier.fillMaxWidth())
@@ -270,6 +272,8 @@ private fun Zoom(controls: CameraControlsLogic, modifier: Modifier = Modifier) {
     }
 }
 
+// TODO: Migrate from deprecated RippleTheme to new Indication APIs
+/*
 private object CustomRippleTheme : RippleTheme {
     val color = RippleTheme.defaultRippleColor(Color.White, false)
     val alpha = RippleTheme.defaultRippleAlpha(Color.White, false)
@@ -284,3 +288,4 @@ private object CustomRippleTheme : RippleTheme {
         return alpha
     }
 }
+*/

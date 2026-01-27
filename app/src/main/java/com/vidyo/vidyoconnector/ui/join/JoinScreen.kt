@@ -10,6 +10,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import com.vidyo.vidyoconnector.bl.ProtocolHandler
 import com.vidyo.vidyoconnector.ui.conference.icons.*
 import com.vidyo.vidyoconnector.ui.utils.LocalConnectorManager
@@ -51,7 +54,9 @@ fun JoinScreen() {
         }
     }
 
-    Column {
+    Column(
+        modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
+    ) {
         Crossfade(targetState = model.type.value, modifier = Modifier.weight(1f)) {
             when (it) {
                 JoinContent.Unknown -> Unit

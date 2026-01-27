@@ -19,6 +19,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import com.vidyo.vidyoconnector.R
 import com.vidyo.vidyoconnector.bl.connector.conference.ConferenceState
 import com.vidyo.vidyoconnector.bl.connector.media.base.Camera
@@ -92,12 +95,14 @@ fun ConferenceScreen() {
 
             JumpBar(
                 moreOptions = moreOptions,
-                modifier = Modifier.constrainAs(jumpBar) {
-                    width = Dimension.fillToConstraints
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom)
-                },
+                modifier = Modifier
+                    .constrainAs(jumpBar) {
+                        width = Dimension.fillToConstraints
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    }
+                    .windowInsetsPadding(WindowInsets.navigationBars),
             )
 
 
