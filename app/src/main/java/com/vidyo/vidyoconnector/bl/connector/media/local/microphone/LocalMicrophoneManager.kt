@@ -10,6 +10,9 @@ import com.vidyo.vidyoconnector.utils.coroutines.collectInScope
 import com.vidyo.vidyoconnector.utils.coroutines.collectInScopeLatest
 import com.vidyo.vidyoconnector.utils.coroutines.trigger
 import com.vidyo.vidyoconnector.utils.logD
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -81,6 +84,24 @@ class LocalMicrophoneManager(private val scope: ConnectorScope, moderation: Muta
             mutedState.value = when (muted) {
                 true -> MutedState.Muted
                 else -> MutedState.None
+            }
+        }
+    }
+
+    fun playTone(tone: Char) {
+        logD { "DTMF: LocalMicrophone playTone('$tone')" }
+        selectedState.value.handle?.playTone(tone)
+    }
+
+    fun playTones(tones: String, intervalMs: Long = 250L) {
+        scope.launch {
+            logD { "DTMF: LocalMicrophone playTones tones='$tones' intervalMs=$intervalMs" }
+            for (tone in tones) {
+                if (!isActive) return@launch
+                if (!tone.isWhitespace()) {
+                    playTone(tone)
+                }
+                delay(intervalMs)
             }
         }
     }

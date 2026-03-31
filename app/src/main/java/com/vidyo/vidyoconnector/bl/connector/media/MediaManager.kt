@@ -39,6 +39,12 @@ class MediaManager(scope: ConnectorScope, conference: ConferenceManager) {
     val remoteMicrophone = RemoteMicrophoneManager(scope)
     val remoteScreenShare = RemoteScreenShareManager(scope)
 
+    fun playDtmfDemo(tones: String = "123#") {
+        logD { "DTMF demo: sending tones='$tones' (speaker+microphone)" }
+        localSpeaker.playTones(tones)
+        localMicrophone.playTones(tones)
+    }
+
     init {
         scope.connector.registerResourceManagerEventListener(ResourceManagerEvents())
         scope.connector.registerModerationCommandEventListener(ModerationCommandEventListener())

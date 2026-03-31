@@ -194,6 +194,8 @@ private fun JumpBarPopup(
             .fillMaxHeight()
             .aspectRatio(ratio = 1f)
 
+        val connector = LocalConnectorManager.current
+
         JumpBarIcon(
             modifier = defaultModifier,
             icon = R.drawable.ic_moderator_controls,
@@ -204,6 +206,12 @@ private fun JumpBarPopup(
         ScreenShareIcon(modifier = defaultModifier)
         ParticipantsIcon(modifier = defaultModifier)
         ChatsIcon(modifier = defaultModifier)
+        JumpBarIcon(
+            modifier = defaultModifier,
+            icon = R.drawable.ic_dtmf,
+            contentDescription = "dtmf demo",
+            onClick = { connector.media.playDtmfDemo() },
+        )
         CameraEffectIcon(modifier = defaultModifier)
         TorchIcon(modifier = defaultModifier)
         CameraControlsIcon(cameraControlsActive, modifier = defaultModifier)
