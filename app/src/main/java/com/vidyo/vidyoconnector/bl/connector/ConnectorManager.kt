@@ -101,7 +101,8 @@ object ConnectorManager {
 
     private fun createScope(context: Context): ConnectorScope {
         ConnectorPkg.setApplicationUIContext(context)
-        if (!ConnectorPkg.initialize()) {
+        LogsManager.logsFile.parentFile?.mkdirs()
+        if (!ConnectorPkg.initialize(LogsManager.logsFile.absolutePath)) {
             throw Exception("ConnectorPkg.initialize() failed")
         }
 
@@ -119,13 +120,11 @@ object ConnectorManager {
             }
         }
 
-        LogsManager.logsFile.parentFile?.mkdirs()
         val connector = Connector(
             null,
             defaultViewStyle,
             DEFAULT_PARTICIPANT_COUNT,
             "",
-            LogsManager.logsFile.absolutePath,
             0,
         )
 
